@@ -2,7 +2,7 @@ import java.util.*
 
 // Calculator program
 fun main() {
-    println(title("0.0.1"))
+    println(title("0.1.0"))
     println(greetings())
     println(instructions())
 
