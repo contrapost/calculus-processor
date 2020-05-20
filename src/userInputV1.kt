@@ -2,41 +2,70 @@ import java.util.*
 
 // Calculator program
 fun main() {
-    printTitle("0.0.1")
-    print(greetings())
+    println(title("0.0.1"))
+    println(greetings())
+    println(instructions())
+
+    var shouldBeStopped = false
+    while (!shouldBeStopped) {
+
+        shouldBeStopped = exitPrompt()
+    }
 }
 
-fun printTitle(version: String = "unknown") {
-    val title = """
+fun exitPrompt(): Boolean {
+    print("Do you want to continue calculating? (Y/N): ")
+    var answer = readLine()
+    while (answer.isNullOrBlank() || (answer.toUpperCase() != "Y" && answer.toUpperCase() != "N")) {
+        print("I didn't understand you. Please, type 'Y' or 'N' for 'Yes' and 'No' (Y/N): ")
+        answer = readLine()
+    }
+
+    return when (answer.toUpperCase()) {
+        "N" -> true
+        else -> false
+    }
+}
+
+fun instructions(): String {
+    val instructionsTextBeginning = "Let's do some Math! This calculator can do following operations:"
+    val operators = operators.map { "${it.key} -> ${it.value}" }.toList().joinToString("\n")
+    val instructionsTextEnding = "Please, if your number is decimal, use '.'"
+
+    return "$instructionsTextBeginning\n $operators \n$instructionsTextEnding"
+}
+
+fun title(version: String = "unknown"): String {
+    return """
                     FANTASTIC CALCULATOR
                         (or just FanC)
         Welcome to the FANTASTIC CALCULATOR version $version!
-        
     """.trimIndent()
-    print(title)
 }
 
 fun greetings(): String {
-    val dayTime = dayTime()
+    val timeInfo = timeInfo()
     print("Please, stay calm and print your name: ")
     val name = readLine()
     val verifiedName = when {
         name.isNullOrBlank() -> "- whatever your name is"
         else -> name
     }
-    val greetingText = "Good $dayTime"
-    return "$greetingText, $verifiedName! "
+    val greetingText = "Good ${timeInfo.dayTime}"
+    return "$greetingText, $verifiedName! You are in zone: ${timeInfo.zone}"
 }
 
-fun dayTime(): String {
-    val time = Calendar.getInstance()
-    val hourOfDay = time.get(Calendar.HOUR_OF_DAY)
-    val timeZone = time.timeZone.id
+fun timeInfo(): TimeInfo {
+    val calendar = Calendar.getInstance()
+    val hourOfDay = calendar.get(Calendar.HOUR_OF_DAY)
+    val timeZone = calendar.timeZone.id
     val dayTime = when (hourOfDay) {
         in 0..5 -> "night"
         in 6..12 -> "morning"
         in 12..18 -> "day"
         else -> "evening"
     }
-    return "$dayTime ($timeZone)"
+    return TimeInfo(dayTime = dayTime, zone = timeZone)
 }
+
+class TimeInfo(val dayTime: String, val zone: String)
