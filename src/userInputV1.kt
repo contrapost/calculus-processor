@@ -16,6 +16,8 @@ fun main() {
 fun exitPrompt(): Boolean {
     print("Do you want to continue calculating? (Y/N): ")
     var answer = readLine()
+    // In line 20 we don't need to check if answer is null or blank because if it is not equal to N or Y it can be
+    // anything else or be blank - so we need only to check if it is fitting to N or Y.
     while (answer.isNullOrBlank() || (answer.toUpperCase() != "Y" && answer.toUpperCase() != "N")) {
         print("I didn't understand you. Please, type 'Y' or 'N' for 'Yes' and 'No' (Y/N): ")
         answer = readLine()
