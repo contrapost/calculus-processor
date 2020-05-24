@@ -5,12 +5,31 @@ fun main() {
     println(title("0.1.0"))
     println(greetings())
     println(instructions())
+    calculate()
+}
 
+fun calculate() {
     var shouldBeStopped = false
     while (!shouldBeStopped) {
 
+        val firstNumber = getNumberInput("Print your first number here -> |")
+        /* TODO: 1. get operator
+        *        2. get second number
+        *        3. calculate
+        * */
         shouldBeStopped = exitPrompt()
     }
+}
+
+fun getNumberInput(prompt: String): Double {
+    print(prompt)
+    var numberAsString = readLine()
+    while (numberAsString == null || numberAsString.toDoubleOrNull() == null) {
+        print("Are you sure, that you printed a number? Try again! " +
+                "Valid number should follow pattern: X or X.X where X is a digit (i.e. 4 or -5.7) -> |")
+        numberAsString = readLine()
+    }
+    return numberAsString.toDouble()
 }
 
 fun exitPrompt(): Boolean {
