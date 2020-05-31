@@ -5,28 +5,49 @@ fun main() {
     println(title("0.1.0"))
     println(greetings())
     println(instructions())
-    calculate()
+    performCalculation()
 }
 
-fun calculate() {
+fun performCalculation() {
     var shouldBeStopped = false
     while (!shouldBeStopped) {
 
         val firstNumber = getNumberInput("Print your first number here -> |")
-        /* TODO: 1. get operator
-        *        2. get second number
-        *        3. calculate
-        * */
+        val operator = getOperatorInput()
+
+        val result = when {
+            secondNumberRequired(operator) -> {
+                val secondNumber = getNumberInput("Print your second number here -> |")
+                calculate(firstNumber, operator, secondNumber)
+            }
+            else -> calculate(firstNumber, operator)
+        }
+
+        println("Your result is -> $result")
+
         shouldBeStopped = exitPrompt()
     }
+}
+
+fun getOperatorInput(): String {
+    val operatorsAsString = operators.keys.joinToString(" ")
+    print("Choose one of this operators: $operatorsAsString -> |")
+    var operatorInput = readLine()
+    while (operatorInput !in operators.keys) {
+        print("Sadly, this operator is unsupported by FanC! Did you choose one of given operators? Try some of them again! Choose one of this operators: $operatorsAsString -> |")
+        operatorInput = readLine()
+    }
+    return operatorInput!!
 }
 
 fun getNumberInput(prompt: String): Double {
     print(prompt)
     var numberAsString = readLine()
     while (numberAsString == null || numberAsString.toDoubleOrNull() == null) {
-        print("Are you sure, that you printed a number? Try again! " +
-                "Valid number should follow pattern: X or X.X where X is a digit (i.e. 4 or -5.7) -> |")
+        print(
+            "Are you sure, that you printed a number? Try again! " +
+                    "Valid number should follow pattern: X or X.X where X is a digit (i.e. 4 or -5.7) -> |"
+        )
         numberAsString = readLine()
     }
     return numberAsString.toDouble()
@@ -48,7 +69,7 @@ fun exitPrompt(): Boolean {
 
 fun instructions(): String {
     val instructionsTextBeginning = "Let's do some Math! This calculator can do following operations:"
-    val operators = operators.map { "${it.key} -> ${it.value}" }.toList().joinToString("\n")
+    val operators = operators.map { "${it.key} -> ${it.value.description}" }.toList().joinToString("\n")
     val instructionsTextEnding = "Please, if your number is decimal, use '.'"
 
     return "$instructionsTextBeginning\n $operators \n$instructionsTextEnding"
