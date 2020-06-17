@@ -30,14 +30,14 @@ fun performCalculation() {
 }
 
 fun getOperatorInput(): String {
-    val operatorsAsString = operators.keys.joinToString(" ")
+    val operatorsAsString = operatorsWithDescriptions.keys.joinToString(" ")
     print("Choose one of this operators: $operatorsAsString -> |")
     var operatorInput = readLine()
-    while (operatorInput !in operators.keys) {
+    while (operatorInput == null || !validOperator(operatorInput)) {
         print("Sadly, this operator is unsupported by FanC! Did you choose one of given operators? Try some of them again! Choose one of this operators: $operatorsAsString -> |")
         operatorInput = readLine()
     }
-    return operatorInput!!
+    return operatorInput
 }
 
 fun getNumberInput(prompt: String): Double {
@@ -69,7 +69,7 @@ fun exitPrompt(): Boolean {
 
 fun instructions(): String {
     val instructionsTextBeginning = "Let's do some Math! This calculator can do following operations:"
-    val operators = operators.map { "${it.key} -> ${it.value.description}" }.toList().joinToString("\n")
+    val operators = operatorsWithDescriptions.map { "${it.key} -> ${it.value}" }.toList().joinToString("\n")
     val instructionsTextEnding = "Please, if your number is decimal, use '.'"
 
     return "$instructionsTextBeginning\n $operators \n$instructionsTextEnding"
