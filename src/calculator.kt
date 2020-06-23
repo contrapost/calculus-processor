@@ -1,4 +1,7 @@
+import java.math.BigDecimal
 import kotlin.math.*
+
+val DOUBLE_OR_INT_REGEX = "\\*\\*\\[\\d+(\\.\\d+)?\\]".toRegex()
 
 val operators = listOf(
     Operator(
@@ -47,15 +50,14 @@ val operators = listOf(
         firstNumber / secondNumber
     },
     Operator(
-        symbol = "**",
-        regex = "\\*\\*".toRegex(),
-        description = "exponentiation",
+        symbol = "^[i]",
+        regex = "\\^\\[\\d+\\]".toRegex(),
+        description = "exponentiation with power i",
         canPrecedeNumber = false,
-        unaryOperator = false,
-        operatorWithBase = false
+        unaryOperator = true,
+        operatorWithBase = true
     ) { firstNumber, secondNumber ->
-        require(secondNumber != null) { binaryOperationError("exponentiation") }
-        firstNumber.pow(secondNumber)
+        firstNumber.pow(secondNumber!!)
     },
     Operator(
         symbol = "%",
@@ -121,18 +123,19 @@ fun binaryOperationError(operationDescription: String) =
 val operatorsWithCalculation = operators.associate { it.regex to it.calculation }
 val operatorsWithDescriptions = operators.associate { it.symbol to it.description }
 val operatorsWithBase = operators.filter { it.operatorWithBase }.map { it.regex }
+val operatorChars = operators.flatMap { it.symbol.toList() }.toSet()
 
 fun validOperator(operatorInput: String) = operators.map { it.regex }.any { operatorInput.matches(it) }
 
 fun secondNumberRequired(operator: String) = operators.filter { !it.unaryOperator }.map { it.symbol }.contains(operator)
 
-fun calculate(firstNumber: Double, operator: String, secondNumber: Double? = null): Double {
+fun calculate(firstNumber: Double, operator: String, secondNumber: Double? = null): BigDecimal {
     val calculation = operatorsWithCalculation.filterKeys { operator.matches(it) }.entries.first().value
     val processedSecondNumber = when {
         operatorsWithBase.hasMatch(operator) -> operator.getBase()
         else -> secondNumber
     }
-    return calculation.invoke(firstNumber, processedSecondNumber)
+    return calculation.invoke(firstNumber, processedSecondNumber).toBigDecimal()
 }
 
 private fun List<Regex>.hasMatch(operator: String) = any { operator.matches(it) }
