@@ -1,7 +1,7 @@
 import java.math.BigDecimal
 import kotlin.math.*
 
-val DOUBLE_OR_INT_REGEX = "\\*\\*\\[\\d+(\\.\\d+)?\\]".toRegex()
+const val DOUBLE_OR_INT_REGEX = "\\[(\\d+)+(.\\d+)?\\]"
 
 val operators = listOf(
     Operator(
@@ -51,7 +51,7 @@ val operators = listOf(
     },
     Operator(
         symbol = "^[i]",
-        regex = "\\^\\[\\d+\\]".toRegex(),
+        regex = "\\^$DOUBLE_OR_INT_REGEX".toRegex(),
         description = "exponentiation with power i",
         canPrecedeNumber = false,
         unaryOperator = true,
@@ -73,7 +73,7 @@ val operators = listOf(
     },
     Operator(
         symbol = "V[i]",
-        regex = "V\\[\\d+\\]".toRegex(),
+        regex = "V$DOUBLE_OR_INT_REGEX".toRegex(),
         description = "root with index i",
         canPrecedeNumber = true,
         unaryOperator = true,
@@ -95,7 +95,7 @@ val operators = listOf(
     },
     Operator(
         symbol = "log[b]",
-        regex = "log\\[\\d+\\]".toRegex(),
+        regex = "log$DOUBLE_OR_INT_REGEX".toRegex(),
         description = "logarithm with base b",
         canPrecedeNumber = true,
         unaryOperator = true,
@@ -129,18 +129,18 @@ fun validOperator(operatorInput: String) = operators.map { it.regex }.any { oper
 
 fun secondNumberRequired(operator: String) = operators.filter { !it.unaryOperator }.map { it.symbol }.contains(operator)
 
-fun calculate(firstNumber: Double, operator: String, secondNumber: Double? = null): BigDecimal {
+fun calculate(firstNumber: Double, operator: String, secondNumber: Double? = null): String {
     val calculation = operatorsWithCalculation.filterKeys { operator.matches(it) }.entries.first().value
     val processedSecondNumber = when {
         operatorsWithBase.hasMatch(operator) -> operator.getBase()
         else -> secondNumber
     }
-    return calculation.invoke(firstNumber, processedSecondNumber).toBigDecimal()
+    return calculation.invoke(firstNumber, processedSecondNumber).toBigDecimal().toPlainString()
 }
 
 private fun List<Regex>.hasMatch(operator: String) = any { operator.matches(it) }
 
-private fun String.getBase(): Double = replace("[^0-9]".toRegex(), "").toDouble()
+private fun String.getBase(): Double = replace("[^0-9.]".toRegex(), "").toDouble()
 
 class Operator(
     val symbol: String,
@@ -156,7 +156,7 @@ fun nthRoot(num: Double, index: Double): Double {
     val temporaryResult = Math.E.pow(ln(num) / index)
     val rounded = round(temporaryResult)
     return when {
-        abs(rounded - temporaryResult) < 0.00000000000001 -> rounded
+        abs(rounded - temporaryResult) < 0.00000000000002 -> rounded
         else -> temporaryResult
     }
 }
