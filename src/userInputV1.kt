@@ -16,7 +16,7 @@ fun performCalculation() {
         val operator = getOperatorInput()
 
         val result = when {
-            secondNumberRequired(operator) -> {
+            !operator.unaryOperator -> {
                 val secondNumber = getNumberInput("Print your second number here -> |")
                 calculate(firstNumber, operator, secondNumber)
             }
@@ -29,15 +29,17 @@ fun performCalculation() {
     }
 }
 
-fun getOperatorInput(): String {
+fun getOperatorInput(): Operator {
     val operatorsAsString = operatorsWithDescriptions.keys.joinToString(" ")
     print("Choose one of this operators: $operatorsAsString -> |")
     var operatorInput = readLine()
-    while (operatorInput == null || !validOperator(operatorInput)) {
+    var operator = validOperator(operatorInput)
+    while (operator == null) {
         print("Sadly, this operator is unsupported by FanC! Did you choose one of given operators? Try some of them again! Choose one of this operators: $operatorsAsString -> |")
         operatorInput = readLine()
+        operator = validOperator(operatorInput)
     }
-    return operatorInput
+    return operator
 }
 
 fun getNumberInput(prompt: String): Double {

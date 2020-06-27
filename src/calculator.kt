@@ -121,26 +121,24 @@ val operators = listOf(
 fun binaryOperationError(operationDescription: String) =
     "Binary operation $operationDescription requires two operands. Second number is missing."
 
-val operatorsWithCalculation = operators.associate { it.regex to it.calculation }
 val operatorsWithDescriptions = operators.associate { it.symbol to it.description }
 val operatorsWithBase = operators.filter { it.operatorWithBase }.map { it.regex }
 val operatorsWithoutBase = operators.filter { !it.operatorWithBase }.map { it.regex }
-val severalCharsOperator = operators.filter { it.symbol.length > 1 }
 
-fun validOperator(operatorInput: String) = operators.map { it.regex }.any { operatorInput.matches(it) }
-
-fun secondNumberRequired(operator: String) = operators.filter { !it.unaryOperator }.map { it.symbol }.contains(operator)
-
-fun calculate(firstNumber: Double, operator: String, secondNumber: Double? = null): String {
-    val calculation = operatorsWithCalculation.filterKeys { operator.matches(it) }.entries.first().value
-    val processedSecondNumber = when {
-        operatorsWithBase.hasMatch(operator) -> operator.getBase()
-        else -> secondNumber
+fun validOperator(operatorInput: String?): Operator? = operatorInput?.let {
+    when (val operator = operators.firstOrNull { operatorInput.matches(it.regex) }) {
+        null -> null
+        else -> operator.setOperator(operatorInput)
     }
-    return calculation.invoke(firstNumber, processedSecondNumber).toPlainString()
 }
 
-private fun List<Regex>.hasMatch(operator: String) = any { operator.matches(it) }
+fun calculate(firstNumber: Double, operator: Operator, secondNumber: Double? = null): String {
+    val processedSecondNumber = when {
+        operator.operatorWithBase -> operator.operator.getBase()
+        else -> secondNumber
+    }
+    return operator.calculation.invoke(firstNumber, processedSecondNumber).toPlainString()
+}
 
 private fun String.getBase(): Double = replace("[^0-9.]".toRegex(), "").toDouble()
 
@@ -152,7 +150,14 @@ class Operator(
     val unaryOperator: Boolean,
     val operatorWithBase: Boolean,
     val calculation: (Double, Double?) -> BigDecimal
-)
+) {
+    lateinit var operator: String
+
+    fun setOperator(operatorInput: String): Operator {
+        this.operator = operatorInput
+        return this
+    }
+}
 
 fun nthRoot(num: Double, index: Double): Double {
     val temporaryResult = Math.E.pow(ln(num) / index)
