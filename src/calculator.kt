@@ -1,7 +1,8 @@
 import java.math.BigDecimal
 import kotlin.math.*
 
-const val DOUBLE_OR_INT_REGEX = "\\[(\\d+)+(.\\d+)?\\]"
+const val DOUBLE_OR_INT_REGEX = "(\\d+(\\.\\d+)?+|\\.\\d+)"
+const val DOUBLE_OR_INT_REGEX_IN_BRACES = "\\[$DOUBLE_OR_INT_REGEX\\]"
 
 val operators = listOf(
     Operator(
@@ -13,7 +14,7 @@ val operators = listOf(
         operatorWithBase = false
     ) { firstNumber, secondNumber ->
         require(secondNumber != null) { binaryOperationError("addition") }
-        firstNumber + secondNumber
+        BigDecimal(firstNumber + secondNumber)
     },
     Operator(
         symbol = "-",
@@ -24,7 +25,7 @@ val operators = listOf(
         operatorWithBase = false
     ) { firstNumber, secondNumber ->
         require(secondNumber != null) { binaryOperationError("subtraction") }
-        firstNumber - secondNumber
+        BigDecimal(firstNumber - secondNumber)
     },
     Operator(
         symbol = "*",
@@ -35,7 +36,7 @@ val operators = listOf(
         operatorWithBase = false
     ) { firstNumber, secondNumber ->
         require(secondNumber != null) { binaryOperationError("multiplication") }
-        firstNumber * secondNumber
+        BigDecimal(firstNumber * secondNumber)
     },
     Operator(
         symbol = "/",
@@ -47,17 +48,17 @@ val operators = listOf(
     ) { firstNumber, secondNumber ->
         require(secondNumber != null) { binaryOperationError("division") }
         require(secondNumber != 0.0) { "Division by $secondNumber is not allowed!" }
-        firstNumber / secondNumber
+        BigDecimal(firstNumber / secondNumber)
     },
     Operator(
-        symbol = "^[i]",
+        symbol = "^i",
         regex = "\\^$DOUBLE_OR_INT_REGEX".toRegex(),
         description = "exponentiation with power i",
         canPrecedeNumber = false,
         unaryOperator = true,
         operatorWithBase = true
     ) { firstNumber, secondNumber ->
-        firstNumber.pow(secondNumber!!)
+        BigDecimal(firstNumber.pow(secondNumber!!))
     },
     Operator(
         symbol = "%",
@@ -69,18 +70,18 @@ val operators = listOf(
     ) { firstNumber, secondNumber ->
         require(secondNumber != null) { binaryOperationError("modulus") }
         require(secondNumber != 0.0) { "Division by $secondNumber is not allowed!" }
-        firstNumber % secondNumber
+        BigDecimal(firstNumber % secondNumber)
     },
     Operator(
         symbol = "V[i]",
-        regex = "V$DOUBLE_OR_INT_REGEX".toRegex(),
+        regex = "V$DOUBLE_OR_INT_REGEX_IN_BRACES".toRegex(),
         description = "root with index i",
         canPrecedeNumber = true,
         unaryOperator = true,
         operatorWithBase = true
     ) { firstNumber, secondNumber ->
         require(firstNumber >= 0.0) { "It is impossible to get even radical of negative number!" }
-        nthRoot(firstNumber, secondNumber!!)
+        BigDecimal(nthRoot(firstNumber, secondNumber!!))
     },
     Operator(
         symbol = "!",
@@ -91,18 +92,18 @@ val operators = listOf(
         operatorWithBase = false
     ) { firstNumber, _ ->
         require(firstNumber >= 0.0) { "It is possible to get factorial only of integer! You must use integer." }
-        factorial(firstNumber)
+        BigDecimal(factorial(firstNumber))
     },
     Operator(
         symbol = "log[b]",
-        regex = "log$DOUBLE_OR_INT_REGEX".toRegex(),
+        regex = "log$DOUBLE_OR_INT_REGEX_IN_BRACES".toRegex(),
         description = "logarithm with base b",
         canPrecedeNumber = true,
         unaryOperator = true,
         operatorWithBase = true
     ) { firstNumber, secondNumber ->
         require(firstNumber >= 0.0) { "You can get logarithm only from number greater than 0!" }
-        log(firstNumber, secondNumber!!)
+        BigDecimal(log(firstNumber, secondNumber!!))
     },
     Operator(
         symbol = "ln",
@@ -113,7 +114,7 @@ val operators = listOf(
         operatorWithBase = false
     ) { firstNumber, _ ->
         require(firstNumber >= 0.0) { "You can get logarithm only from number greater than 0!" }
-        ln(firstNumber)
+        BigDecimal(ln(firstNumber))
     }
 )
 
@@ -123,7 +124,8 @@ fun binaryOperationError(operationDescription: String) =
 val operatorsWithCalculation = operators.associate { it.regex to it.calculation }
 val operatorsWithDescriptions = operators.associate { it.symbol to it.description }
 val operatorsWithBase = operators.filter { it.operatorWithBase }.map { it.regex }
-val operatorChars = operators.flatMap { it.symbol.toList() }.toSet()
+val operatorsWithoutBase = operators.filter { !it.operatorWithBase }.map { it.regex }
+val severalCharsOperator = operators.filter { it.symbol.length > 1 }
 
 fun validOperator(operatorInput: String) = operators.map { it.regex }.any { operatorInput.matches(it) }
 
@@ -135,7 +137,7 @@ fun calculate(firstNumber: Double, operator: String, secondNumber: Double? = nul
         operatorsWithBase.hasMatch(operator) -> operator.getBase()
         else -> secondNumber
     }
-    return calculation.invoke(firstNumber, processedSecondNumber).toBigDecimal().toPlainString()
+    return calculation.invoke(firstNumber, processedSecondNumber).toPlainString()
 }
 
 private fun List<Regex>.hasMatch(operator: String) = any { operator.matches(it) }
@@ -149,7 +151,7 @@ class Operator(
     val canPrecedeNumber: Boolean,
     val unaryOperator: Boolean,
     val operatorWithBase: Boolean,
-    val calculation: (Double, Double?) -> Double
+    val calculation: (Double, Double?) -> BigDecimal
 )
 
 fun nthRoot(num: Double, index: Double): Double {
