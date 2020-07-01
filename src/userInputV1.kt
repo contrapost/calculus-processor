@@ -16,7 +16,7 @@ fun performCalculation() {
         val operator = getOperatorInput()
 
         val result = when {
-            !operator.unaryOperator -> {
+            !operator.operatorSpec.unaryOperator -> {
                 val secondNumber = getNumberInput("Print your second number here -> |")
                 calculate(firstNumber, operator, secondNumber)
             }
