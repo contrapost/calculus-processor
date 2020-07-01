@@ -1,20 +1,24 @@
-fun String.toCalculusParts() {
+val calculusRegexes = listOf(
+        NumberPart::class to DOUBLE_OR_INT_REGEX.toRegex(),
+        LeftParenthesisPart::class to "\\(".toRegex(),
+        RightParenthesisPart::class to "\\)".toRegex()
+)
 
-    val operatorMatches: MutableMap<IntRange, CalculusPart> = mutableMapOf()
+fun String.toCalculusParts(): MutableList<CalculusPart> {
 
-    operators.forEach { operatorSpec ->
-        operatorSpec.regex.findAll(this).forEach {
-            operatorMatches[it.range] = OperatorPart(Operator(it.value, operatorSpec))
-        }
-    }
+    val operatorsWithRanges = operators.map { operatorSpec ->
+        operatorSpec.regex.findAll(this).map {
+            CalculusPartWithRange(it.range, OperatorPart(Operator(it.value, operatorSpec)))
+        }.toList()
+    }.flatten()
 
-    val calculusPartList = this.extractMatches(operatorMatches)
+    val calculusPartList = this.extractMatches(operatorsWithRanges)
 
     val calculusPartListComplete: MutableList<CalculusPart> = mutableListOf()
 
     when {
         calculusPartList.isEmpty() -> {
-            addNumbersAndParentheses(calculusPartListComplete, this)
+            calculusPartListComplete.addNumbersAndParentheses(this)
         }
         else -> {
             calculusPartList.forEach { entry ->
@@ -22,91 +26,107 @@ fun String.toCalculusParts() {
                     is OperatorPart -> calculusPartListComplete.add(entry)
                     else -> {
                         val undefinedCalculusPart = (entry as UndefinedPart).value
-                        addNumbersAndParentheses(calculusPartListComplete, undefinedCalculusPart)
+                        calculusPartListComplete.addNumbersAndParentheses(undefinedCalculusPart)
                     }
                 }
             }
         }
     }
 
-    calculusPartListComplete.forEach { println(it) }
+    return calculusPartListComplete
 }
 
-fun addNumbersAndParentheses(list: MutableList<CalculusPart>, undefinedCalculusPart: String) {
-    val matches: MutableMap<IntRange, CalculusPart> = mutableMapOf()
-    DOUBLE_OR_INT_REGEX.toRegex().findAll(undefinedCalculusPart).forEach {
-        matches[it.range] = NumberPart(it.value.toBigDecimal())
-    }
-    "\\(".toRegex().findAll(undefinedCalculusPart).forEach {
-        matches[it.range] = LeftParenthesisPart()
-    }
-    "\\)".toRegex().findAll(undefinedCalculusPart).forEach {
-        matches[it.range] = RightParenthesisPart()
-    }
-    when {
-        matches.isEmpty() -> {
-            list.add(UndefinedPart(undefinedCalculusPart))
-        }
-        else -> {
-            val definedCalculusPartSublist = undefinedCalculusPart.extractMatches(matches)
-            list.addAll(definedCalculusPartSublist)
-        }
-    }
-}
-
-fun String.extractMatches(listOfRanges: MutableMap<IntRange, CalculusPart>): List<CalculusPart> {
+@Suppress("LiftReturnOrAssignment")
+fun String.extractMatches(calculusPartsWithRanges: List<CalculusPartWithRange>): List<CalculusPart> {
     var stopIndex = 0
     val stringAsListOfRanges: MutableList<CalculusPart> = mutableListOf()
-    listOfRanges.entries.sortedBy { it.key.first }.forEachIndexed { index, entry ->
+    calculusPartsWithRanges.sortedBy { it.range.first }.forEachIndexed { index, entry ->
         when (index) {
             // last match
-            listOfRanges.size - 1 -> {
+            calculusPartsWithRanges.size - 1 -> {
                 when {
                     // part of undefined string is longer than match
-                    stopIndex until this.length != entry.key -> {
+                    stopIndex until this.length != entry.range -> {
                         when {
-                            entry.key.last == this.length - 1 -> {
-                                stringAsListOfRanges.add(UndefinedPart(this.substring(stopIndex until entry.key.first)))
-                                stringAsListOfRanges.add(entry.value)
-                                stopIndex = entry.key.last + 1
+                            entry.range.last == this.length - 1 -> {
+                                stringAsListOfRanges.add(
+                                        UndefinedPart(this.substring(stopIndex until entry.range.first))
+                                )
+                                stringAsListOfRanges.add(entry.calculusPart)
+                                stopIndex = entry.range.last + 1
                             }
-                            entry.key.first == stopIndex -> {
-                                stringAsListOfRanges.add(entry.value)
-                                stringAsListOfRanges.add(UndefinedPart(this.substring(entry.key.last + 1 until this.length)))
+                            entry.range.first == stopIndex -> {
+                                stringAsListOfRanges.add(entry.calculusPart)
+                                stringAsListOfRanges.add(
+                                        UndefinedPart(this.substring(entry.range.last + 1 until this.length))
+                                )
                                 stopIndex = this.length - 1
                             }
                             else -> {
-                                stringAsListOfRanges.add(UndefinedPart(this.substring(stopIndex until entry.key.first)))
-                                stringAsListOfRanges.add(entry.value)
-                                stringAsListOfRanges.add(UndefinedPart(this.substring(entry.key.last + 1 until this.length)))
+                                stringAsListOfRanges.add(
+                                        UndefinedPart(this.substring(stopIndex until entry.range.first))
+                                )
+                                stringAsListOfRanges.add(entry.calculusPart)
+                                stringAsListOfRanges.add(
+                                        UndefinedPart(this.substring(entry.range.last + 1 until this.length))
+                                )
                                 stopIndex = this.length - 1
                             }
                         }
                     }
                     else -> {
-                        stringAsListOfRanges.add(entry.value)
+                        stringAsListOfRanges.add(entry.calculusPart)
+                        stopIndex = this.length - 1
                     }
                 }
             }
             // all other cases
             else -> {
-                when (entry.key.first) {
+                when (entry.range.first) {
                     // the match is right after the last processed part of the string
                     stopIndex -> {
-                        stringAsListOfRanges.add(entry.value)
-                        stopIndex = entry.key.last + 1
+                        stringAsListOfRanges.add(entry.calculusPart)
+                        stopIndex = entry.range.last + 1
                     }
                     // there are undefined part of the string before the match
                     else -> {
-                        stringAsListOfRanges.add(UndefinedPart(value = this.substring(stopIndex until entry.key.first)))
-                        stringAsListOfRanges.add(entry.value)
-                        stopIndex = entry.key.last + 1
+                        stringAsListOfRanges.add(
+                                UndefinedPart(value = this.substring(stopIndex until entry.range.first))
+                        )
+                        stringAsListOfRanges.add(entry.calculusPart)
+                        stopIndex = entry.range.last + 1
                     }
                 }
             }
         }
     }
     return stringAsListOfRanges
+}
+
+fun MutableList<CalculusPart>.addNumbersAndParentheses(undefinedCalculusPart: String) {
+
+    val matches = calculusRegexes.map { regex ->
+        regex.second.findAll(undefinedCalculusPart).map {
+            CalculusPartWithRange(
+                    it.range,
+                    when (regex.first) {
+                        NumberPart::class -> NumberPart(it.value.toBigDecimal())
+                        LeftParenthesisPart::class -> LeftParenthesisPart()
+                        else -> RightParenthesisPart()
+                    }
+            )
+        }.toList()
+    }.flatten()
+
+    when {
+        matches.isEmpty() -> {
+            this.add(UndefinedPart(undefinedCalculusPart))
+        }
+        else -> {
+            val definedCalculusPartSublist = undefinedCalculusPart.extractMatches(matches)
+            this.addAll(definedCalculusPartSublist)
+        }
+    }
 }
 
 data class CalculusPartWithRange(
