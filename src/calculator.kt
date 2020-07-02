@@ -1,4 +1,5 @@
 import java.math.BigDecimal
+import java.math.BigInteger
 import kotlin.math.*
 
 const val DOUBLE_OR_INT_REGEX = "(\\d+(\\.\\d+)?+|\\.\\d+)"
@@ -81,7 +82,7 @@ val operators = listOf(
                 operatorWithBase = true
         ) { firstNumber, secondNumber ->
             require(firstNumber >= 0.0) { "It is impossible to get even radical of negative number!" }
-            BigDecimal(nthRoot(firstNumber, secondNumber!!))
+            nthRoot(firstNumber, secondNumber!!)
         },
         OperatorSpec(
                 symbol = "!",
@@ -91,7 +92,7 @@ val operators = listOf(
                 unaryOperator = true,
                 operatorWithBase = false
         ) { firstNumber, _ ->
-            require(firstNumber >= 0.0) { "It is possible to get factorial only of integer! You must use integer." }
+            require(firstNumber - firstNumber.toInt() == 0.0) { "Can calculate factorial only of a positive integer" }
             BigDecimal(factorial(firstNumber))
         },
         OperatorSpec(
@@ -154,15 +155,17 @@ data class OperatorSpec(
 
 data class Operator(val operatorInput: String, val operatorSpec: OperatorSpec)
 
-fun nthRoot(num: Double, index: Double): Double {
+fun nthRoot(num: Double, index: Double): BigDecimal {
     val temporaryResult = Math.E.pow(ln(num) / index)
     val rounded = round(temporaryResult)
-    return when {
+    return BigDecimal(when {
         abs(rounded - temporaryResult) < 0.00000000000002 -> rounded
         else -> temporaryResult
-    }
+    })
 }
 
-fun factorial(first: Double): Double {
-    TODO("Not yet implemented")
+fun factorial(number: Double): BigInteger {
+    var result = BigInteger.ONE
+    (2..number.toInt()).forEach { result = result.multiply(BigInteger.valueOf(it.toLong())) }
+    return result
 }
