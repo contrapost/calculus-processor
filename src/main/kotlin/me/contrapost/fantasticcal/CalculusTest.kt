@@ -1,3 +1,7 @@
+package me.contrapost.fantasticcal
+
+import me.contrapost.fantasticcal.calculus.toCalculusParts
+import me.contrapost.fantasticcal.operators.Operator
 import java.math.BigDecimal
 
 fun main() {

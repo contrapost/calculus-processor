@@ -1,11 +1,15 @@
+package me.contrapost.fantasticcal.userinput
+
+import me.contrapost.fantasticcal.calculator.calculate
+import me.contrapost.fantasticcal.operators.Operator
+import me.contrapost.fantasticcal.operators.operatorsWithDescriptions
+import me.contrapost.fantasticcal.operators.validOperator
 import java.util.*
 
-// Calculator program
-fun main() {
+fun showIntro() {
     println(title("0.1.0"))
     println(greetings())
     println(instructions())
-    performCalculation()
 }
 
 fun performCalculation() {
