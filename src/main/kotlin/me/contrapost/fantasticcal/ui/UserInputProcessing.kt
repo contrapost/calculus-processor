@@ -1,10 +1,11 @@
-package me.contrapost.fantasticcal.userinput
+package me.contrapost.fantasticcal.ui
 
 import me.contrapost.fantasticcal.calculator.calculate
 import me.contrapost.fantasticcal.operators.Operator
 import me.contrapost.fantasticcal.operators.operatorsWithDescriptions
 import me.contrapost.fantasticcal.operators.validOperator
 import java.util.*
+import kotlin.system.exitProcess
 
 fun showIntro() {
     println(title("0.1.0"))
@@ -115,3 +116,13 @@ fun timeInfo(): TimeInfo {
 }
 
 class TimeInfo(val dayTime: String, val zone: String)
+
+fun String?.toCheckedInput(): String = when (this) {
+    null -> {
+        println("Something went wrong with I/O. Terminating the program!")
+        exitProcess(1)
+    }
+    else -> this
+}
+
+fun stopProgram(): Nothing = exitProcess(0)
