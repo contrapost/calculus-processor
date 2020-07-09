@@ -1,14 +1,15 @@
 package me.contrapost.fantasticcal.calculus
 
-import me.contrapost.fantasticcal.*
+import me.contrapost.fantasticcal.operators.BinaryOperatorSpec
 import me.contrapost.fantasticcal.operators.Operator
+import me.contrapost.fantasticcal.operators.UnaryOperatorSpec
 import me.contrapost.fantasticcal.operators.operators
 import me.contrapost.fantasticcal.util.DOUBLE_OR_INT_REGEX
 
 val calculusRegexes = listOf(
     NumberPart::class to DOUBLE_OR_INT_REGEX.toRegex(),
-    LeftParenthesisPart::class to "\\(".toRegex(),
-    RightParenthesisPart::class to "\\)".toRegex()
+    OpenParenthesisPart::class to "\\(".toRegex(),
+    CloseParenthesisPart::class to "\\)".toRegex()
 )
 
 fun String.toCalculusParts(): MutableList<CalculusPart> {
@@ -21,7 +22,12 @@ fun String.toCalculusParts(): MutableList<CalculusPart> {
                     Operator(
                         it.value,
                         operatorSpec
-                    )
+                    ),
+                    type = when (operatorSpec) {
+                        is UnaryOperatorSpec -> "unary operator"
+                        is BinaryOperatorSpec -> "binary operator"
+                        else -> throw UnsupportedClassVersionError("") // TODO
+                    }
                 )
             )
         }.toList()
@@ -148,8 +154,8 @@ fun MutableList<CalculusPart>.addNumbersAndParentheses(undefinedCalculusPart: St
                     NumberPart::class -> NumberPart(
                         it.value.toBigDecimal()
                     )
-                    LeftParenthesisPart::class -> LeftParenthesisPart()
-                    else -> RightParenthesisPart()
+                    OpenParenthesisPart::class -> OpenParenthesisPart()
+                    else -> CloseParenthesisPart()
                 }
             )
         }.toList()

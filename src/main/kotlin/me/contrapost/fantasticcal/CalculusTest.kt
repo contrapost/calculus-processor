@@ -10,6 +10,18 @@ import me.contrapost.fantasticcal.util.removeWhitespaces
 fun main() {
     val validCalculusPartList = getValidCalculus()
     validCalculusPartList.forEach { println(it) }
+
+    //test()
+}
+
+fun test() {
+    print("""
+        Insert calculus (you can type 'stop' to exit).
+        > 
+    """.trimIndent())
+    readLine().toCheckedInput().removeWhitespaces().toCalculusParts().forEach {
+        println(it)
+    }
 }
 
 fun getValidCalculus(): List<CalculusPart> {

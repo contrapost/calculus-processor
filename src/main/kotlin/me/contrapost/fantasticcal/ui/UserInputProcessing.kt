@@ -1,6 +1,7 @@
 package me.contrapost.fantasticcal.ui
 
 import me.contrapost.fantasticcal.calculator.calculate
+import me.contrapost.fantasticcal.operators.BinaryOperatorSpec
 import me.contrapost.fantasticcal.operators.Operator
 import me.contrapost.fantasticcal.operators.operatorsWithDescriptions
 import me.contrapost.fantasticcal.operators.validOperator
@@ -20,8 +21,8 @@ fun performCalculation() {
         val firstNumber = getNumberInput("Print your first number here -> |")
         val operator = getOperatorInput()
 
-        val result = when {
-            !operator.operatorSpec.unaryOperator -> {
+        val result = when (operator.operatorSpec) {
+            is BinaryOperatorSpec -> {
                 val secondNumber = getNumberInput("Print your second number here -> |")
                 calculate(firstNumber, operator, secondNumber)
             }
