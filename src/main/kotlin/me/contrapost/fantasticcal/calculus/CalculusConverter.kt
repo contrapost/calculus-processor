@@ -1,14 +1,35 @@
+package me.contrapost.fantasticcal.calculus
+
+import me.contrapost.fantasticcal.operators.BinaryOperatorSpec
+import me.contrapost.fantasticcal.operators.Operator
+import me.contrapost.fantasticcal.operators.UnaryOperatorSpec
+import me.contrapost.fantasticcal.operators.operators
+import me.contrapost.fantasticcal.util.DOUBLE_OR_INT_REGEX
+
 val calculusRegexes = listOf(
-        NumberPart::class to DOUBLE_OR_INT_REGEX.toRegex(),
-        LeftParenthesisPart::class to "\\(".toRegex(),
-        RightParenthesisPart::class to "\\)".toRegex()
+    NumberPart::class to DOUBLE_OR_INT_REGEX.toRegex(),
+    OpenParenthesisPart::class to "\\(".toRegex(),
+    CloseParenthesisPart::class to "\\)".toRegex()
 )
 
 fun String.toCalculusParts(): MutableList<CalculusPart> {
 
     val operatorsWithRanges = operators.map { operatorSpec ->
         operatorSpec.regex.findAll(this).map {
-            CalculusPartWithRange(it.range, OperatorPart(Operator(it.value, operatorSpec)))
+            CalculusPartWithRange(
+                it.range,
+                OperatorPart(
+                    Operator(
+                        it.value,
+                        operatorSpec
+                    ),
+                    type = when (operatorSpec) {
+                        is UnaryOperatorSpec -> "unary operator"
+                        is BinaryOperatorSpec -> "binary operator"
+                        else -> throw UnsupportedClassVersionError("") // TODO
+                    }
+                )
+            )
         }.toList()
     }.flatten()
 
@@ -50,7 +71,11 @@ fun String.extractMatches(calculusPartsWithRanges: List<CalculusPartWithRange>):
                         when {
                             entry.range.last == this.length - 1 -> {
                                 stringAsListOfRanges.add(
-                                        UndefinedPart(this.substring(stopIndex until entry.range.first))
+                                    UndefinedPart(
+                                        this.substring(
+                                            stopIndex until entry.range.first
+                                        )
+                                    )
                                 )
                                 stringAsListOfRanges.add(entry.calculusPart)
                                 stopIndex = entry.range.last + 1
@@ -58,17 +83,29 @@ fun String.extractMatches(calculusPartsWithRanges: List<CalculusPartWithRange>):
                             entry.range.first == stopIndex -> {
                                 stringAsListOfRanges.add(entry.calculusPart)
                                 stringAsListOfRanges.add(
-                                        UndefinedPart(this.substring(entry.range.last + 1 until this.length))
+                                    UndefinedPart(
+                                        this.substring(
+                                            entry.range.last + 1 until this.length
+                                        )
+                                    )
                                 )
                                 stopIndex = this.length - 1
                             }
                             else -> {
                                 stringAsListOfRanges.add(
-                                        UndefinedPart(this.substring(stopIndex until entry.range.first))
+                                    UndefinedPart(
+                                        this.substring(
+                                            stopIndex until entry.range.first
+                                        )
+                                    )
                                 )
                                 stringAsListOfRanges.add(entry.calculusPart)
                                 stringAsListOfRanges.add(
-                                        UndefinedPart(this.substring(entry.range.last + 1 until this.length))
+                                    UndefinedPart(
+                                        this.substring(
+                                            entry.range.last + 1 until this.length
+                                        )
+                                    )
                                 )
                                 stopIndex = this.length - 1
                             }
@@ -91,7 +128,11 @@ fun String.extractMatches(calculusPartsWithRanges: List<CalculusPartWithRange>):
                     // there are undefined part of the string before the match
                     else -> {
                         stringAsListOfRanges.add(
-                                UndefinedPart(value = this.substring(stopIndex until entry.range.first))
+                            UndefinedPart(
+                                value = this.substring(
+                                    stopIndex until entry.range.first
+                                )
+                            )
                         )
                         stringAsListOfRanges.add(entry.calculusPart)
                         stopIndex = entry.range.last + 1
@@ -108,12 +149,14 @@ fun MutableList<CalculusPart>.addNumbersAndParentheses(undefinedCalculusPart: St
     val matches = calculusRegexes.map { regex ->
         regex.second.findAll(undefinedCalculusPart).map {
             CalculusPartWithRange(
-                    it.range,
-                    when (regex.first) {
-                        NumberPart::class -> NumberPart(it.value.toBigDecimal())
-                        LeftParenthesisPart::class -> LeftParenthesisPart()
-                        else -> RightParenthesisPart()
-                    }
+                it.range,
+                when (regex.first) {
+                    NumberPart::class -> NumberPart(
+                        it.value.toBigDecimal()
+                    )
+                    OpenParenthesisPart::class -> OpenParenthesisPart()
+                    else -> CloseParenthesisPart()
+                }
             )
         }.toList()
     }.flatten()
@@ -130,6 +173,6 @@ fun MutableList<CalculusPart>.addNumbersAndParentheses(undefinedCalculusPart: St
 }
 
 data class CalculusPartWithRange(
-        val range: IntRange,
-        val calculusPart: CalculusPart
+    val range: IntRange,
+    val calculusPart: CalculusPart
 )

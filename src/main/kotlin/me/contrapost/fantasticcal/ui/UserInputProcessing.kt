@@ -1,11 +1,17 @@
-import java.util.*
+package me.contrapost.fantasticcal.ui
 
-// Calculator program
-fun main() {
+import me.contrapost.fantasticcal.calculator.calculate
+import me.contrapost.fantasticcal.operators.BinaryOperatorSpec
+import me.contrapost.fantasticcal.operators.Operator
+import me.contrapost.fantasticcal.operators.operatorsWithDescriptions
+import me.contrapost.fantasticcal.operators.validOperator
+import java.util.*
+import kotlin.system.exitProcess
+
+fun showIntro() {
     println(title("0.1.0"))
     println(greetings())
     println(instructions())
-    performCalculation()
 }
 
 fun performCalculation() {
@@ -15,8 +21,8 @@ fun performCalculation() {
         val firstNumber = getNumberInput("Print your first number here -> |")
         val operator = getOperatorInput()
 
-        val result = when {
-            !operator.operatorSpec.unaryOperator -> {
+        val result = when (operator.operatorSpec) {
+            is BinaryOperatorSpec -> {
                 val secondNumber = getNumberInput("Print your second number here -> |")
                 calculate(firstNumber, operator, secondNumber)
             }
@@ -111,3 +117,13 @@ fun timeInfo(): TimeInfo {
 }
 
 class TimeInfo(val dayTime: String, val zone: String)
+
+fun String?.toCheckedInput(): String = when (this) {
+    null -> {
+        println("Something went wrong with I/O. Terminating the program!")
+        exitProcess(1)
+    }
+    else -> this
+}
+
+fun stopProgram(): Nothing = exitProcess(0)
