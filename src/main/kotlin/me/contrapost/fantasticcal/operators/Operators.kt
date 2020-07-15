@@ -2,9 +2,16 @@ package me.contrapost.fantasticcal.operators
 
 import me.contrapost.fantasticcal.operations.factorial
 import me.contrapost.fantasticcal.operations.nthRoot
-import me.contrapost.fantasticcal.util.DOUBLE_OR_INT_REGEX
-import me.contrapost.fantasticcal.util.DOUBLE_OR_INT_REGEX_IN_BRACES
-import me.contrapost.fantasticcal.util.DOUBLE_OR_INT_REGEX_POSITIVE_IN_BRACES
+import me.contrapost.fantasticcal.util.BinaryOperatorRegexes.ADDITION
+import me.contrapost.fantasticcal.util.BinaryOperatorRegexes.DIVISION
+import me.contrapost.fantasticcal.util.BinaryOperatorRegexes.MODULUS
+import me.contrapost.fantasticcal.util.BinaryOperatorRegexes.MULTIPLICATION
+import me.contrapost.fantasticcal.util.BinaryOperatorRegexes.SUBTRACTION
+import me.contrapost.fantasticcal.util.UnaryOperatorRegexes.EXPONENTIATION
+import me.contrapost.fantasticcal.util.UnaryOperatorRegexes.FACTORIAL
+import me.contrapost.fantasticcal.util.UnaryOperatorRegexes.LOGARITHM
+import me.contrapost.fantasticcal.util.UnaryOperatorRegexes.LOGARITHM_E
+import me.contrapost.fantasticcal.util.UnaryOperatorRegexes.ROOT
 import java.math.BigDecimal
 import kotlin.math.ln
 import kotlin.math.log
@@ -48,7 +55,7 @@ data class Operator(val operatorInput: String, val operatorSpec: OperatorSpec)
 val operators = listOf(
     BinaryOperatorSpec(
         symbol = "+",
-        regex = "\\+".toRegex(),
+        regex = ADDITION.regex.toRegex(),
         description = "addition"
     ) { firstNumber, secondNumber ->
         require(secondNumber != null) { binaryOperationError("addition") }
@@ -56,7 +63,7 @@ val operators = listOf(
     },
     BinaryOperatorSpec(
         symbol = "-",
-        regex = "(?<=(-)?$DOUBLE_OR_INT_REGEX)-(?=(-)?$DOUBLE_OR_INT_REGEX)".toRegex(),
+        regex = SUBTRACTION.regex.toRegex(),
         description = "subtraction"
     ) { firstNumber, secondNumber ->
         require(secondNumber != null) { binaryOperationError("subtraction") }
@@ -64,7 +71,7 @@ val operators = listOf(
     },
     BinaryOperatorSpec(
         symbol = "*",
-        regex = "\\*".toRegex(),
+        regex = MULTIPLICATION.regex.toRegex(),
         description = "multiplication"
     ) { firstNumber, secondNumber ->
         require(secondNumber != null) { binaryOperationError("multiplication") }
@@ -72,7 +79,7 @@ val operators = listOf(
     },
     BinaryOperatorSpec(
         symbol = "/",
-        regex = "/".toRegex(),
+        regex = DIVISION.regex.toRegex(),
         description = "division"
     ) { firstNumber, secondNumber ->
         require(secondNumber != null) { binaryOperationError("division") }
@@ -81,7 +88,7 @@ val operators = listOf(
     },
     BinaryOperatorSpec(
         symbol = "%",
-        regex = "%".toRegex(),
+        regex = MODULUS.regex.toRegex(),
         description = "modulus"
     ) { firstNumber, secondNumber ->
         require(secondNumber != null) { binaryOperationError("modulus") }
@@ -90,7 +97,7 @@ val operators = listOf(
     },
     UnaryOperatorSpec(
         symbol = "^i",
-        regex = "\\^$DOUBLE_OR_INT_REGEX".toRegex(),
+        regex = EXPONENTIATION.regex.toRegex(),
         description = "exponentiation with power i",
         operatorPosition = UnaryOperatorPosition.SUCCEED_NUMBER,
         operatorWithBase = true
@@ -99,7 +106,7 @@ val operators = listOf(
     },
     UnaryOperatorSpec(
         symbol = "V[i]",
-        regex = "V$DOUBLE_OR_INT_REGEX_IN_BRACES".toRegex(),
+        regex = ROOT.regex.toRegex(),
         description = "root with index i",
         operatorPosition = UnaryOperatorPosition.PRECEDE_NUMBER,
         operatorWithBase = true
@@ -109,7 +116,7 @@ val operators = listOf(
     },
     UnaryOperatorSpec(
         symbol = "!",
-        regex = "!".toRegex(),
+        regex = FACTORIAL.regex.toRegex(),
         description = "factorial",
         operatorPosition = UnaryOperatorPosition.SUCCEED_NUMBER,
         operatorWithBase = false
@@ -119,7 +126,7 @@ val operators = listOf(
     },
     UnaryOperatorSpec(
         symbol = "log[b]",
-        regex = "log$DOUBLE_OR_INT_REGEX_POSITIVE_IN_BRACES".toRegex(),
+        regex = LOGARITHM.regex.toRegex(),
         description = "logarithm with base b",
         operatorPosition = UnaryOperatorPosition.PRECEDE_NUMBER,
         operatorWithBase = true
@@ -129,7 +136,7 @@ val operators = listOf(
     },
     UnaryOperatorSpec(
         symbol = "ln",
-        regex = "ln".toRegex(),
+        regex = LOGARITHM_E.regex.toRegex(),
         description = "logarithm with base e",
         operatorPosition = UnaryOperatorPosition.PRECEDE_NUMBER,
         operatorWithBase = false

@@ -4,12 +4,13 @@ import me.contrapost.fantasticcal.operators.BinaryOperatorSpec
 import me.contrapost.fantasticcal.operators.Operator
 import me.contrapost.fantasticcal.operators.UnaryOperatorSpec
 import me.contrapost.fantasticcal.operators.operators
-import me.contrapost.fantasticcal.util.DOUBLE_OR_INT_REGEX
+import me.contrapost.fantasticcal.util.NumberRegexes.DOUBLE_OR_INT_REGEX
+import me.contrapost.fantasticcal.util.ParenthesisRegexes
 
 val calculusRegexes = listOf(
     NumberPart::class to DOUBLE_OR_INT_REGEX.toRegex(),
-    OpenParenthesisPart::class to "\\(".toRegex(),
-    CloseParenthesisPart::class to "\\)".toRegex()
+    OpenParenthesisPart::class to ParenthesisRegexes.OPEN_PARENTHESIS.regex.toRegex(),
+    CloseParenthesisPart::class to ParenthesisRegexes.CLOSE_PARENTHESIS.regex.toRegex()
 )
 
 fun String.toCalculusParts(): MutableList<CalculusPart> {

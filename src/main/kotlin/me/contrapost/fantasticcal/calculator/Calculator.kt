@@ -1,7 +1,12 @@
 package me.contrapost.fantasticcal.calculator
 
+import me.contrapost.fantasticcal.calculus.CalculusPart
 import me.contrapost.fantasticcal.operators.Operator
 import me.contrapost.fantasticcal.util.keepNumber
+
+fun calculate(calculationParts: List<CalculusPart>): String {
+    TODO("Not yet implemented")
+}
 
 fun calculate(firstNumber: Double, operator: Operator, secondNumber: Double? = null): String =
     operator
