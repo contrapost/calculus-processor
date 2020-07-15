@@ -1,9 +1,8 @@
-package me.contrapost.fantasticcal.util
+package me.contrapost.fantasticcal.operators
 
-import me.contrapost.fantasticcal.operators.UnaryOperatorPosition
-import me.contrapost.fantasticcal.util.NumberRegexes.DOUBLE_OR_INT_REGEX
-import me.contrapost.fantasticcal.util.NumberRegexes.DOUBLE_OR_INT_REGEX_IN_BRACES
-import me.contrapost.fantasticcal.util.NumberRegexes.DOUBLE_OR_INT_REGEX_POSITIVE_IN_BRACES
+import me.contrapost.fantasticcal.operators.NumberRegexes.DOUBLE_OR_INT_REGEX
+import me.contrapost.fantasticcal.operators.NumberRegexes.DOUBLE_OR_INT_REGEX_IN_BRACES
+import me.contrapost.fantasticcal.operators.NumberRegexes.DOUBLE_OR_INT_REGEX_POSITIVE_IN_BRACES
 
 object NumberRegexes {
     const val DOUBLE_OR_INT_REGEX = "(-)?(\\d{1,1000}(\\.\\d{1,1000})?+|\\.\\d{1,1000})"
@@ -43,15 +42,18 @@ fun subtractionRegex(): String {
         succeedingRegexes.forEach { succeedingRegex ->
             regexes.add("((?<=$succeedingRegex)$minus(?=$precedingRegex))")
         }
-
     }
 
-    //"(?<=(-)?($DOUBLE_OR_INT_REGEX)${succeedingUnaryOperatorRegexes().joinToString(prefix = "+|(", separator = ")+|(", postfix = ")")})-(?=(-)?($DOUBLE_OR_INT_REGEX)${precedingUnaryOperatorRegexes().joinToString(prefix = "+|(", separator = ")+|(", postfix = ")")})"
     return regexes.joinToString(separator = "+|")
 }
 
-fun precedingUnaryOperatorRegexes() = UnaryOperatorRegexes.values().filter { it.operatorPosition == UnaryOperatorPosition.PRECEDE_NUMBER }.map { it.regex }
-fun succeedingUnaryOperatorRegexes()= UnaryOperatorRegexes.values().filter { it.operatorPosition == UnaryOperatorPosition.SUCCEED_NUMBER }.map { it.regex }
+fun precedingUnaryOperatorRegexes() =
+    UnaryOperatorRegexes.values().filter { it.operatorPosition == UnaryOperatorPosition.PRECEDE_NUMBER }
+        .map { it.regex }
+
+fun succeedingUnaryOperatorRegexes() =
+    UnaryOperatorRegexes.values().filter { it.operatorPosition == UnaryOperatorPosition.SUCCEED_NUMBER }
+        .map { it.regex }
 
 fun String.keepNumber(): Double = replace("[^0-9.-]".toRegex(), "").toDouble()
 

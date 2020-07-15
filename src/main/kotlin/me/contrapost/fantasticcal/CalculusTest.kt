@@ -6,7 +6,7 @@ import me.contrapost.fantasticcal.calculus.toCalculusParts
 import me.contrapost.fantasticcal.calculus.validate
 import me.contrapost.fantasticcal.ui.stopProgram
 import me.contrapost.fantasticcal.ui.toCheckedInput
-import me.contrapost.fantasticcal.util.removeWhitespaces
+import me.contrapost.fantasticcal.operators.removeWhitespaces
 
 fun main() {
     val validCalculusPartList = getValidCalculus()

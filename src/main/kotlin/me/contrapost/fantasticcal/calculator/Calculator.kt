@@ -2,7 +2,7 @@ package me.contrapost.fantasticcal.calculator
 
 import me.contrapost.fantasticcal.calculus.CalculusPart
 import me.contrapost.fantasticcal.operators.Operator
-import me.contrapost.fantasticcal.util.keepNumber
+import me.contrapost.fantasticcal.operators.keepNumber
 
 fun calculate(calculationParts: List<CalculusPart>): String {
     TODO("Not yet implemented")

@@ -1,6 +1,6 @@
 package me.contrapost.fantasticcal.calculus
 
-import me.contrapost.fantasticcal.util.removeWhitespaces
+import me.contrapost.fantasticcal.operators.removeWhitespaces
 import org.junit.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue

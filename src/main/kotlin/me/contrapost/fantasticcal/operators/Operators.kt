@@ -2,16 +2,16 @@ package me.contrapost.fantasticcal.operators
 
 import me.contrapost.fantasticcal.operations.factorial
 import me.contrapost.fantasticcal.operations.nthRoot
-import me.contrapost.fantasticcal.util.BinaryOperatorRegexes.ADDITION
-import me.contrapost.fantasticcal.util.BinaryOperatorRegexes.DIVISION
-import me.contrapost.fantasticcal.util.BinaryOperatorRegexes.MODULUS
-import me.contrapost.fantasticcal.util.BinaryOperatorRegexes.MULTIPLICATION
-import me.contrapost.fantasticcal.util.BinaryOperatorRegexes.SUBTRACTION
-import me.contrapost.fantasticcal.util.UnaryOperatorRegexes.EXPONENTIATION
-import me.contrapost.fantasticcal.util.UnaryOperatorRegexes.FACTORIAL
-import me.contrapost.fantasticcal.util.UnaryOperatorRegexes.LOGARITHM
-import me.contrapost.fantasticcal.util.UnaryOperatorRegexes.LOGARITHM_E
-import me.contrapost.fantasticcal.util.UnaryOperatorRegexes.ROOT
+import me.contrapost.fantasticcal.operators.BinaryOperatorRegexes.ADDITION
+import me.contrapost.fantasticcal.operators.BinaryOperatorRegexes.DIVISION
+import me.contrapost.fantasticcal.operators.BinaryOperatorRegexes.MODULUS
+import me.contrapost.fantasticcal.operators.BinaryOperatorRegexes.MULTIPLICATION
+import me.contrapost.fantasticcal.operators.BinaryOperatorRegexes.SUBTRACTION
+import me.contrapost.fantasticcal.operators.UnaryOperatorRegexes.EXPONENTIATION
+import me.contrapost.fantasticcal.operators.UnaryOperatorRegexes.FACTORIAL
+import me.contrapost.fantasticcal.operators.UnaryOperatorRegexes.LOGARITHM
+import me.contrapost.fantasticcal.operators.UnaryOperatorRegexes.LOGARITHM_E
+import me.contrapost.fantasticcal.operators.UnaryOperatorRegexes.ROOT
 import java.math.BigDecimal
 import kotlin.math.ln
 import kotlin.math.log
@@ -99,7 +99,7 @@ val operators = listOf(
         symbol = "^i",
         regex = EXPONENTIATION.regex.toRegex(),
         description = "exponentiation with power i",
-        operatorPosition = UnaryOperatorPosition.SUCCEED_NUMBER,
+        operatorPosition = EXPONENTIATION.operatorPosition,
         operatorWithBase = true
     ) { firstNumber, secondNumber ->
         BigDecimal(firstNumber.pow(secondNumber!!))
@@ -108,7 +108,7 @@ val operators = listOf(
         symbol = "V[i]",
         regex = ROOT.regex.toRegex(),
         description = "root with index i",
-        operatorPosition = UnaryOperatorPosition.PRECEDE_NUMBER,
+        operatorPosition = ROOT.operatorPosition,
         operatorWithBase = true
     ) { firstNumber, secondNumber ->
         require(firstNumber >= 0.0) { "It is impossible to get even radical of negative number!" }
@@ -118,7 +118,7 @@ val operators = listOf(
         symbol = "!",
         regex = FACTORIAL.regex.toRegex(),
         description = "factorial",
-        operatorPosition = UnaryOperatorPosition.SUCCEED_NUMBER,
+        operatorPosition = FACTORIAL.operatorPosition,
         operatorWithBase = false
     ) { firstNumber, _ ->
         require(firstNumber - firstNumber.toInt() == 0.0) { "Can calculate factorial only of a positive integer" }
@@ -128,7 +128,7 @@ val operators = listOf(
         symbol = "log[b]",
         regex = LOGARITHM.regex.toRegex(),
         description = "logarithm with base b",
-        operatorPosition = UnaryOperatorPosition.PRECEDE_NUMBER,
+        operatorPosition = LOGARITHM.operatorPosition,
         operatorWithBase = true
     ) { firstNumber, secondNumber ->
         require(firstNumber >= 0.0) { "You can get logarithm only from number greater than 0!" }
@@ -138,7 +138,7 @@ val operators = listOf(
         symbol = "ln",
         regex = LOGARITHM_E.regex.toRegex(),
         description = "logarithm with base e",
-        operatorPosition = UnaryOperatorPosition.PRECEDE_NUMBER,
+        operatorPosition = LOGARITHM_E.operatorPosition,
         operatorWithBase = false
     ) { firstNumber, _ ->
         require(firstNumber >= 0.0) { "You can get logarithm only from number greater than 0!" }

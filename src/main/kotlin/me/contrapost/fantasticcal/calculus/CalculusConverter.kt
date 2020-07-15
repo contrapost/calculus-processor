@@ -4,8 +4,8 @@ import me.contrapost.fantasticcal.operators.BinaryOperatorSpec
 import me.contrapost.fantasticcal.operators.Operator
 import me.contrapost.fantasticcal.operators.UnaryOperatorSpec
 import me.contrapost.fantasticcal.operators.operators
-import me.contrapost.fantasticcal.util.NumberRegexes.DOUBLE_OR_INT_REGEX
-import me.contrapost.fantasticcal.util.ParenthesisRegexes
+import me.contrapost.fantasticcal.operators.NumberRegexes.DOUBLE_OR_INT_REGEX
+import me.contrapost.fantasticcal.operators.ParenthesisRegexes
 
 val calculusRegexes = listOf(
     NumberPart::class to DOUBLE_OR_INT_REGEX.toRegex(),
