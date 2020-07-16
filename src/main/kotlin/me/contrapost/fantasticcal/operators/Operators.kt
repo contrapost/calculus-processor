@@ -158,4 +158,6 @@ fun validOperator(operatorInput: String?): Operator? = operatorInput?.let {
     }
 }
 
-fun String.toOperatorSpec() = operators.firstOrNull { this.matches(it.regex) }
+private fun String.toOperatorSpec() = operators.firstOrNull {
+    (this == "-" && it.symbol == "-") || this.matches(it.regex)
+}

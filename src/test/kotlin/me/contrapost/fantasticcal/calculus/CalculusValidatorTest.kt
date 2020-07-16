@@ -72,7 +72,7 @@ class CalculusValidatorTest {
 
     @Test
     fun `case 5_4 valid calculus`() {
-        val calculus = "2 - 67 * log[2]4".removeWhitespaces()
+        val calculus = "2 - 67 * log[2]4 + (5 - V[2]4) - 5^3 - 2".removeWhitespaces()
         val validationResult = validate(calculus.toCalculusParts())
         println(validationResult)
         assertTrue { validationResult.valid }

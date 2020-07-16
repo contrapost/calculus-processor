@@ -29,7 +29,7 @@ fun performCalculation() {
             else -> calculate(firstNumber, operator)
         }
 
-        println("Your result is -> $result")
+        println("Your result is -> ${result.toPlainString()}")
 
         shouldBeStopped = exitPrompt()
     }

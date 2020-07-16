@@ -19,6 +19,7 @@ abstract class CalculusPart {
                 (this is NumberPart && operatorSpec.precedeNumber())                                    // log[4]4
                         || (this is OperatorPart && binaryOperator() && operatorSpec.succeedNumber())   // ^2 +
                         || (this is CloseParenthesisPart && operatorSpec.succeedNumber())               // ^2)
+                        || (this is OpenParenthesisPart && operatorPart.precedeNumber())                // log[4](
             }
             else -> throw UnsupportedOperationException()
         }
