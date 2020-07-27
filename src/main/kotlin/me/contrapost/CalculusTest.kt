@@ -1,4 +1,4 @@
-package me.contrapost.fantasticcal
+package me.contrapost
 
 import me.contrapost.fantasticcal.calculator.calculate
 import me.contrapost.fantasticcal.calculus.CalculusPart

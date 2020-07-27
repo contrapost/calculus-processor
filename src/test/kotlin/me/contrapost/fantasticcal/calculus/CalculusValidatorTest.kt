@@ -8,7 +8,7 @@ import kotlin.test.assertTrue
 class CalculusValidatorTest {
 
     @Test
-    fun `case 1 calculus with undefined parts`() {
+    fun `case 1 - calculus with undefined parts`() {
         val calculus = "2 + 45 - 32xyz".removeWhitespaces()
         val validationResult = validate(calculus.toCalculusParts())
         assertFalse { validationResult.valid }
@@ -17,7 +17,7 @@ class CalculusValidatorTest {
 
     @Test
     fun `case 2 calculus with only one part`() {
-        val calculus = "+"
+        val calculus = "+".removeWhitespaces()
         val validationResult = validate(calculus.toCalculusParts())
         assertFalse { validationResult.valid }
         assertTrue { validationResult.errors[0].contains("at least one operator and one number") }
