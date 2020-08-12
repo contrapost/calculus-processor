@@ -87,12 +87,14 @@ enum class BinaryOperatorSpec(
     override val symbol: String,
     override val regex: Regex,
     override val description: String,
+    val precedence: BinaryOperatorPrecedence,
     override inline val calculation: (Double, Double?) -> BigDecimal
 ): OperatorSpec {
     ADDITION(
         symbol = "+",
         regex = "\\+".toRegex(),
         description = "addition",
+        precedence = BinaryOperatorPrecedence.SECOND,
         calculation = { firstNumber, secondNumber ->
             require(secondNumber != null) { binaryOperationError("addition") }
             BigDecimal(firstNumber + secondNumber)
@@ -102,6 +104,7 @@ enum class BinaryOperatorSpec(
         symbol = "*",
         regex = "\\*".toRegex(),
         description = "multiplication",
+        precedence = BinaryOperatorPrecedence.FIRST,
         calculation = { firstNumber, secondNumber ->
             require(secondNumber != null) { binaryOperationError("multiplication") }
             BigDecimal(firstNumber * secondNumber)
@@ -111,6 +114,7 @@ enum class BinaryOperatorSpec(
         symbol = "/",
         regex = "/".toRegex(),
         description = "division",
+        precedence = BinaryOperatorPrecedence.FIRST,
         calculation = { firstNumber, secondNumber ->
             require(secondNumber != null) { binaryOperationError("division") }
             require(secondNumber != 0.0) { "Division by $secondNumber is not allowed!" }
@@ -121,6 +125,7 @@ enum class BinaryOperatorSpec(
         symbol = "%",
         regex = "%".toRegex(),
         description = "modulus",
+        precedence = BinaryOperatorPrecedence.FIRST,
         calculation = { firstNumber, secondNumber ->
             require(secondNumber != null) { binaryOperationError("modulus") }
             require(secondNumber != 0.0) { "Division by $secondNumber is not allowed!" }
@@ -131,11 +136,17 @@ enum class BinaryOperatorSpec(
         symbol = "-",
         regex = subtractionRegex().toRegex(),
         description = "subtraction",
+        precedence = BinaryOperatorPrecedence.SECOND,
         calculation = { firstNumber, secondNumber ->
             require(secondNumber != null) { binaryOperationError("subtraction") }
             BigDecimal(firstNumber - secondNumber)
         }
     )
+}
+
+enum class BinaryOperatorPrecedence {
+    FIRST,
+    SECOND
 }
 
 enum class ParenthesisRegexes(val regex: String) {

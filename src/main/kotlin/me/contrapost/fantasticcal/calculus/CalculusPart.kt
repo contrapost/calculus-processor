@@ -1,9 +1,6 @@
 package me.contrapost.fantasticcal.calculus
 
-import me.contrapost.fantasticcal.operators.BinaryOperatorSpec
-import me.contrapost.fantasticcal.operators.Operator
-import me.contrapost.fantasticcal.operators.UnaryOperatorPosition
-import me.contrapost.fantasticcal.operators.UnaryOperatorSpec
+import me.contrapost.fantasticcal.operators.*
 import java.math.BigDecimal
 
 abstract class CalculusPart {
@@ -60,6 +57,8 @@ abstract class CalculusPart {
         // ))                                                    // ) +               // )^2
         this is CloseParenthesisPart || (this is OperatorPart && (binaryOperator() || succeedNumber()))
 
+    fun parentheses() = this is ParenthesisPart
+
     fun toShortDescription(): String = when(this) {
         is OperatorPart -> "$type with value ${value.operatorInput}"
         is NumberPart, is UndefinedPart ->  "$type with value $value"
@@ -69,6 +68,7 @@ abstract class CalculusPart {
 }
 
 data class UndefinedPart(override val value: String, override val type: String = "undefined part") : CalculusPart()
+
 data class OperatorPart(override val value: Operator, override val type: String) : CalculusPart() {
     fun precedeNumber() = value.operatorSpec is UnaryOperatorSpec &&
             value.operatorSpec.operatorPosition == UnaryOperatorPosition.PRECEDE_NUMBER
@@ -77,14 +77,20 @@ data class OperatorPart(override val value: Operator, override val type: String)
             value.operatorSpec.operatorPosition == UnaryOperatorPosition.SUCCEED_NUMBER
 
     fun binaryOperator() = value.operatorSpec is BinaryOperatorSpec
+
+    fun unaryOperator() = value.operatorSpec is UnaryOperatorSpec
 }
 
 data class NumberPart(override val value: BigDecimal, override val type: String = "number") : CalculusPart()
+
+abstract class ParenthesisPart : CalculusPart()
+
 data class OpenParenthesisPart(
     override val value: String = "(",
     override val type: String = "open parenthesis"
-) : CalculusPart()
+) : ParenthesisPart()
+
 data class CloseParenthesisPart(
     override val value: String = ")",
     override val type: String = "close parenthesis"
-) : CalculusPart()
+) : ParenthesisPart()

@@ -13,7 +13,7 @@ val calculusRegexes = listOf(
     CloseParenthesisPart::class to ParenthesisRegexes.CLOSE_PARENTHESIS.regex.toRegex()
 )
 
-fun String.toCalculusParts(): MutableList<CalculusPart> {
+fun String.toCalculusParts(): Calculus {
 
     val operatorsWithRanges = operators.map { operatorSpec ->
         operatorSpec.regex.findAll(this).map {
@@ -55,7 +55,7 @@ fun String.toCalculusParts(): MutableList<CalculusPart> {
         }
     }
 
-    return calculusPartListComplete
+    return Calculus(calculusPartListComplete)
 }
 
 @Suppress("LiftReturnOrAssignment")
@@ -177,3 +177,9 @@ data class CalculusPartWithRange(
     val range: IntRange,
     val calculusPart: CalculusPart
 )
+
+data class Calculus(
+    val parts: List<CalculusPart>
+) {
+    val complex = parts.filterIsInstance(ParenthesisPart::class.java).isNotEmpty()
+}

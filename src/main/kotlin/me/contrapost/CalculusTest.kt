@@ -1,7 +1,7 @@
 package me.contrapost
 
 import me.contrapost.fantasticcal.calculator.calculate
-import me.contrapost.fantasticcal.calculus.CalculusPart
+import me.contrapost.fantasticcal.calculus.Calculus
 import me.contrapost.fantasticcal.calculus.toCalculusParts
 import me.contrapost.fantasticcal.calculus.validate
 import me.contrapost.fantasticcal.ui.stopProgram
@@ -9,15 +9,13 @@ import me.contrapost.fantasticcal.ui.toCheckedInput
 import me.contrapost.fantasticcal.util.removeWhitespaces
 
 fun main() {
-    val validCalculusPartList = getValidCalculus()
-    validCalculusPartList.forEach { println(it) }
+    val validCalculus = getValidCalculus()
 
-    val calculationResult = calculate(validCalculusPartList)
+    val calculationResult = calculate(validCalculus)
     println("Result: $calculationResult")
-    //test()
 }
 
-fun getValidCalculus(): List<CalculusPart> {
+fun getValidCalculus(): Calculus {
     print("""
         Insert calculus (you can type 'stop' to exit).
         > 
@@ -54,7 +52,7 @@ fun test() {
         Insert calculus (you can type 'stop' to exit).
         > 
     """.trimIndent())
-    readLine().toCheckedInput().removeWhitespaces().toCalculusParts().forEach {
+    readLine().toCheckedInput().removeWhitespaces().toCalculusParts().parts.forEach {
         println(it)
     }
 }

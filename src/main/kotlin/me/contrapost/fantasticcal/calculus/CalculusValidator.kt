@@ -2,10 +2,10 @@ package me.contrapost.fantasticcal.calculus
 
 import kotlin.math.abs
 
-fun validate(calculusList: List<CalculusPart>): ValidationResult {
+fun validate(calculusList: Calculus): ValidationResult {
     val errors: MutableList<String> = mutableListOf()
-    val undefinedParts = calculusList.filterIsInstance<UndefinedPart>()
-    val definedParts = calculusList.filter { it !is UndefinedPart }
+    val undefinedParts = calculusList.parts.filterIsInstance<UndefinedPart>()
+    val definedParts = calculusList.parts.filter { it !is UndefinedPart }
 
     when {
         // case 1: calculus contains undefined parts
