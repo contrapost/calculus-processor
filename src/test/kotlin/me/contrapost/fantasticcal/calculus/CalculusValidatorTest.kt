@@ -29,7 +29,6 @@ class CalculusValidatorTest {
     fun `case 3 correct number of parentheses in correct order`() {
         val calculus = "(9 + 3 * log[4]4) * (V[2]9 - 27)".removeWhitespaces()
         val validationResult = validate(calculus.toCalculusParts())
-        println(validationResult)
         assertTrue { validationResult.valid }
     }
 
@@ -74,7 +73,6 @@ class CalculusValidatorTest {
     fun `case 5_4 valid calculus`() {
         val calculus = "2 - 67 * log[2]4 + (5 - V[2]4) - 5^3 - 2".removeWhitespaces()
         val validationResult = validate(calculus.toCalculusParts())
-        println(validationResult)
         assertTrue { validationResult.valid }
     }
 
@@ -117,7 +115,13 @@ class CalculusValidatorTest {
     fun `case 5_10 binary operator succeeds open parenthesis`() {
         val calculus = "2 + (67 * log[2]4( + 4^7) + 5)".removeWhitespaces()
         val validationResult = validate(calculus.toCalculusParts())
-        println(validationResult)
         assertFalse { validationResult.valid }
+    }
+
+    @Test
+    fun `case 5_11 unary operator succeeds close parenthesis`() {
+        val  calculus = "34 * (23 - 12) ^3 - 2".removeWhitespaces()
+        val validationResult = validate(calculus.toCalculusParts())
+        assertTrue { validationResult.valid }
     }
 }

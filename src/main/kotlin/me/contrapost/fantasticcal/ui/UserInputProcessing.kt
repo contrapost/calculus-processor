@@ -1,15 +1,19 @@
 package me.contrapost.fantasticcal.ui
 
 import me.contrapost.fantasticcal.calculator.calculate
+import me.contrapost.fantasticcal.calculus.Calculus
+import me.contrapost.fantasticcal.calculus.toCalculusParts
+import me.contrapost.fantasticcal.calculus.validate
 import me.contrapost.fantasticcal.operators.BinaryOperatorSpec
 import me.contrapost.fantasticcal.operators.Operator
 import me.contrapost.fantasticcal.operators.operatorsWithDescriptions
 import me.contrapost.fantasticcal.operators.validOperator
+import me.contrapost.fantasticcal.util.removeWhitespaces
 import java.util.*
 import kotlin.system.exitProcess
 
 fun showIntro() {
-    println(title("0.1.0"))
+    println(title("0.2.0"))
     println(greetings())
     println(instructions())
 }
@@ -31,7 +35,50 @@ fun performCalculation() {
 
         println("Your result is -> ${result.toPlainString()}")
 
-        shouldBeStopped = exitPrompt()
+        shouldBeStopped = yesNoPrompt("Do you want to continue calculating?")
+    }
+}
+
+fun performComplexCalculation() {
+    var stop = false
+    val detailed = yesNoPrompt("Do you want to see step by step calculation")
+    while (!stop) {
+        val validCalculus = getValidCalculus()
+        val calculationResult = calculate(validCalculus, detailed)
+        println("Result: $calculationResult")
+        stop = yesNoPrompt("Do you want to continue calculating?")
+    }
+}
+
+fun getValidCalculus(): Calculus {
+    print("""
+        Insert calculus (you can type 'stop' to exit).
+        > 
+    """.trimIndent())
+    var calculus = readLine().toCheckedInput().removeWhitespaces()
+    var stop = calculus.toLowerCase() == "stop"
+    if (stop) stopProgram()
+    var calculusList = calculus.toCalculusParts()
+    var validationResult = validate(calculusList)
+    while (!stop && !validationResult.valid) {
+        print("""
+            Calculus is invalid: ${validationResult.errors}. Please compose a new calculus or type 'stop' to exit.
+            > 
+        """.trimIndent())
+        calculus = readLine().toCheckedInput().removeWhitespaces()
+
+        when {
+            calculus.toLowerCase() == "stop" -> stop = true
+            else -> {
+                calculusList = calculus.toCalculusParts()
+                validationResult = validate(calculusList)
+            }
+        }
+    }
+
+    return when {
+        stop -> stopProgram()
+        else -> calculusList
     }
 }
 
@@ -61,8 +108,8 @@ fun getNumberInput(prompt: String): Double {
     return numberAsString.toDouble()
 }
 
-fun exitPrompt(): Boolean {
-    print("Do you want to continue calculating? (Y/N): ")
+fun yesNoPrompt(prompt: String): Boolean {
+    print("$prompt (Y/N): ")
     var answer = readLine()
     while (answer == null || (answer.toUpperCase() != "Y" && answer.toUpperCase() != "N")) {
         print("I didn't understand you. Please, type 'Y' or 'N' for 'Yes' and 'No' (Y/N): ")
@@ -78,7 +125,10 @@ fun exitPrompt(): Boolean {
 fun instructions(): String {
     val instructionsTextBeginning = "Let's do some Math! This calculator can do following operations:"
     val operators = operatorsWithDescriptions.map { "${it.key} -> ${it.value}" }.toList().joinToString("\n")
-    val instructionsTextEnding = "Please, if your number is decimal, use '.'"
+    val instructionsTextEnding = """
+        Please, if your number is decimal, use '.'
+        Calculator can perform complex calculations with multiple operations (precedence can be set by using parenthesis).
+    """.trimIndent()
 
     return "$instructionsTextBeginning\n $operators \n$instructionsTextEnding"
 }

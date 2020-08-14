@@ -1,14 +1,10 @@
 package me.contrapost
 
-import me.contrapost.fantasticcal.calculator.calculate
-import me.contrapost.fantasticcal.calculus.Calculus
 import me.contrapost.fantasticcal.calculus.toCalculusParts
-import me.contrapost.fantasticcal.calculus.validate
-import me.contrapost.fantasticcal.ui.stopProgram
 import me.contrapost.fantasticcal.ui.toCheckedInput
 import me.contrapost.fantasticcal.util.removeWhitespaces
 
-fun main() {
+/*fun main() {
     val validCalculus = getValidCalculus()
 
     val calculationResult = calculate(validCalculus)
@@ -45,7 +41,7 @@ fun getValidCalculus(): Calculus {
         stop -> stopProgram()
         else -> calculusList
     }
-}
+}*/
 
 fun test() {
     print("""

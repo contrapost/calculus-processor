@@ -144,9 +144,9 @@ enum class BinaryOperatorSpec(
     )
 }
 
-enum class BinaryOperatorPrecedence {
-    FIRST,
-    SECOND
+enum class BinaryOperatorPrecedence(val precedence: Int) {
+    FIRST(1),
+    SECOND(2)
 }
 
 enum class ParenthesisRegexes(val regex: String) {

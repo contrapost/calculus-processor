@@ -23,12 +23,13 @@ abstract class CalculusPart {
 
     fun canPrecedeOperator(operatorPart: OperatorPart) = when (val operatorSpec = operatorPart.value.operatorSpec) {
         is BinaryOperatorSpec ->
-            // 4 +                // 4)                           // 4!
+            // 4 +                // ) +                           // 4! +
             this is NumberPart || this is CloseParenthesisPart || this is OperatorPart && succeedNumber()
         is UnaryOperatorSpec -> {
             (operatorSpec.precedeNumber() && this is OperatorPart && binaryOperator())  // + log[4]
                     || (operatorSpec.precedeNumber() && this is OpenParenthesisPart)    // (log[4]
                     || (operatorSpec.succeedNumber() && this is NumberPart)             // 4^2
+                    || (operatorSpec.succeedNumber() && this is CloseParenthesisPart)   // )^2
         }
         else -> throw UnsupportedOperationException()
     }
