@@ -1,24 +1,26 @@
 package me.contrapost.fantasticcal.calculator
 
-import me.contrapost.fantasticcal.calculus.Calculus
-import me.contrapost.fantasticcal.calculus.CalculusPart
-import me.contrapost.fantasticcal.calculus.NumberPart
-import me.contrapost.fantasticcal.calculus.OperatorPart
-import me.contrapost.fantasticcal.operators.BinaryOperatorPrecedence
-import me.contrapost.fantasticcal.operators.BinaryOperatorSpec
-import me.contrapost.fantasticcal.operators.Operator
-import me.contrapost.fantasticcal.operators.UnaryOperatorPosition.PRECEDE_NUMBER
-import me.contrapost.fantasticcal.operators.UnaryOperatorPosition.SUCCEED_NUMBER
-import me.contrapost.fantasticcal.operators.UnaryOperatorSpec
-import me.contrapost.fantasticcal.util.keepNumber
-import me.contrapost.fantasticcal.util.toCalculusString
+import me.contrapost.fantasticcal.calculator.calculus.Calculus
+import me.contrapost.fantasticcal.calculator.calculus.CalculusPart
+import me.contrapost.fantasticcal.calculator.calculus.NumberPart
+import me.contrapost.fantasticcal.calculator.calculus.OperatorPart
+import me.contrapost.fantasticcal.calculator.operators.BinaryOperatorPrecedence
+import me.contrapost.fantasticcal.calculator.operators.BinaryOperatorSpec
+import me.contrapost.fantasticcal.calculator.operators.Operator
+import me.contrapost.fantasticcal.calculator.operators.UnaryOperatorPosition.PRECEDE_NUMBER
+import me.contrapost.fantasticcal.calculator.operators.UnaryOperatorPosition.SUCCEED_NUMBER
+import me.contrapost.fantasticcal.calculator.operators.UnaryOperatorSpec
+import me.contrapost.fantasticcal.calculator.util.keepNumber
+import me.contrapost.fantasticcal.calculator.util.toCalculusString
 import java.math.BigDecimal
 
 fun calculate(calculus: Calculus, detailed: Boolean) = calculus.calculateParts(detailed).parts[0].value as BigDecimal
 
 tailrec fun Calculus.calculateParts(detailed: Boolean): Calculus =
     if (!this.complex && this.parts.size == 1) this
-    else Calculus(this.parts.calculateParts().removeExcessiveParenthesis()).calculateParts(detailed)
+    else Calculus(
+        this.parts.calculateParts().removeExcessiveParenthesis()
+    ).calculateParts(detailed)
 
 fun List<CalculusPart>.calculateParts(): List<CalculusPart> =
     this.calculateUnaryParts()
@@ -64,13 +66,14 @@ fun List<CalculusPart>.calculateBinaryParts(precedence: BinaryOperatorPrecedence
                         )
                         )
             ) {
-                calculusPartList[calculusPartList.size - 1] = NumberPart(
-                    value = calculate(
-                        (calculusPartList[calculusPartList.size - 1].value as BigDecimal).toDouble(),
-                        entry.value,
-                        (this[index + 1].value as BigDecimal).toDouble()
+                calculusPartList[calculusPartList.size - 1] =
+                    NumberPart(
+                        value = calculate(
+                            (calculusPartList[calculusPartList.size - 1].value as BigDecimal).toDouble(),
+                            entry.value,
+                            (this[index + 1].value as BigDecimal).toDouble()
+                        )
                     )
-                )
                 index++
             } else {
                 calculusPartList.add(entry)
@@ -104,12 +107,13 @@ fun List<CalculusPart>.calculateUnaryParts(): List<CalculusPart> {
                 }
                 SUCCEED_NUMBER -> {
                     if (!this[index - 1].parentheses()) {
-                        calculusPartList[calculusPartList.size - 1] = NumberPart(
-                            value = calculate(
-                                (calculusPartList[calculusPartList.size - 1].value as BigDecimal).toDouble(),
-                                entry.value
+                        calculusPartList[calculusPartList.size - 1] =
+                            NumberPart(
+                                value = calculate(
+                                    (calculusPartList[calculusPartList.size - 1].value as BigDecimal).toDouble(),
+                                    entry.value
+                                )
                             )
-                        )
                     } else calculusPartList.add(entry)
                 }
             }

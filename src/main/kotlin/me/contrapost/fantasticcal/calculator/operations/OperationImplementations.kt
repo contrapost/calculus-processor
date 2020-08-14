@@ -1,4 +1,4 @@
-package me.contrapost.fantasticcal.operations
+package me.contrapost.fantasticcal.calculator.operations
 
 import java.math.BigDecimal
 import java.math.BigInteger

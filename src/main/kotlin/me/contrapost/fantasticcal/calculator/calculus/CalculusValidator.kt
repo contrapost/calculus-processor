@@ -1,17 +1,21 @@
-package me.contrapost.fantasticcal.calculus
+package me.contrapost.fantasticcal.calculator.calculus
 
 import kotlin.math.abs
 
-fun validate(calculusList: Calculus): ValidationResult {
+fun validate(calculus: Calculus): ValidationResult {
     val errors: MutableList<String> = mutableListOf()
-    val undefinedParts = calculusList.parts.filterIsInstance<UndefinedPart>()
-    val definedParts = calculusList.parts.filter { it !is UndefinedPart }
+    val undefinedParts = calculus.parts.filterIsInstance<UndefinedPart>()
+    val definedParts = calculus.parts.filter { it !is UndefinedPart }
 
     when {
         // case 1: calculus contains undefined parts
         undefinedParts.isNotEmpty() ->
             errors.add("Calculus contains undefined part(s): ${undefinedParts.map { it.value }}")
-        else -> errors.addAll(validateDefinedParts(definedParts))
+        else -> errors.addAll(
+            validateDefinedParts(
+                definedParts
+            )
+        )
     }
 
     return ValidationResult(errors.isEmpty(), errors)
@@ -43,28 +47,76 @@ fun validateDefinedParts(definedParts: List<CalculusPart>): List<String> {
                 when (part) {
                     is OpenParenthesisPart -> {
                         if (!precedingPart.canPrecedeOpenParenthesis())
-                            errors.add(precedingPartOrderError(precedingPart, index, part))
+                            errors.add(
+                                precedingPartOrderError(
+                                    precedingPart,
+                                    index,
+                                    part
+                                )
+                            )
                         if (!succeedingPart.canBeOpeningPart())
-                            errors.add(succeedingPartOrderError(succeedingPart, index + 2, part))
+                            errors.add(
+                                succeedingPartOrderError(
+                                    succeedingPart,
+                                    index + 2,
+                                    part
+                                )
+                            )
                     }
                     is CloseParenthesisPart -> {
                         if (!precedingPart.canBeClosingPart())
-                            errors.add(precedingPartOrderError(precedingPart, index, part))
+                            errors.add(
+                                precedingPartOrderError(
+                                    precedingPart,
+                                    index,
+                                    part
+                                )
+                            )
                         if (!succeedingPart.canSucceedCloseParenthesis())
-                            errors.add(succeedingPartOrderError(succeedingPart, index + 2, part))
+                            errors.add(
+                                succeedingPartOrderError(
+                                    succeedingPart,
+                                    index + 2,
+                                    part
+                                )
+                            )
 
                     }
                     is NumberPart -> {
                         if (!precedingPart.canPrecedeNumber())
-                            errors.add(precedingPartOrderError(precedingPart, index, part))
+                            errors.add(
+                                precedingPartOrderError(
+                                    precedingPart,
+                                    index,
+                                    part
+                                )
+                            )
                         if (!succeedingPart.canSucceedNumber())
-                            errors.add(succeedingPartOrderError(succeedingPart, index + 2, part))
+                            errors.add(
+                                succeedingPartOrderError(
+                                    succeedingPart,
+                                    index + 2,
+                                    part
+                                )
+                            )
                     }
                     is OperatorPart -> {
                         if (!precedingPart.canPrecedeOperator(part))
-                            errors.add(precedingPartOrderError(precedingPart, index, part))
+                            errors.add(
+                                precedingPartOrderError(
+                                    precedingPart,
+                                    index,
+                                    part
+                                )
+                            )
                         if (!succeedingPart.canSucceedOperator(part))
-                            errors.add(succeedingPartOrderError(succeedingPart, index + 2, part))
+                            errors.add(
+                                succeedingPartOrderError(
+                                    succeedingPart,
+                                    index + 2,
+                                    part
+                                )
+                            )
                     }
                 }
             }

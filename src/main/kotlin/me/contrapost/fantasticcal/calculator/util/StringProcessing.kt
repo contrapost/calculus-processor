@@ -1,7 +1,7 @@
-package me.contrapost.fantasticcal.util
+package me.contrapost.fantasticcal.calculator.util
 
-import me.contrapost.fantasticcal.calculus.CalculusPart
-import me.contrapost.fantasticcal.calculus.OperatorPart
+import me.contrapost.fantasticcal.calculator.calculus.CalculusPart
+import me.contrapost.fantasticcal.calculator.calculus.OperatorPart
 
 object NumberRegexes {
     const val DOUBLE_OR_INT_REGEX = "(-)?(\\d{1,1000}(\\.\\d{1,1000})?+|\\.\\d{1,1000})"
@@ -11,8 +11,6 @@ object NumberRegexes {
 }
 
 fun String.keepNumber(): Double = replace("[^0-9.-]".toRegex(), "").toDouble()
-
-fun String.removeWhitespaces() = this.replace(" ", "")
 
 fun List<CalculusPart>.toCalculusString() = this.map {
     when (it) {

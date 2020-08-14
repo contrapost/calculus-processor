@@ -1,8 +1,8 @@
-package me.contrapost.fantasticcal.operators
+package me.contrapost.fantasticcal.calculator.operators
 
-import me.contrapost.fantasticcal.operations.factorial
-import me.contrapost.fantasticcal.operations.nthRoot
-import me.contrapost.fantasticcal.util.NumberRegexes
+import me.contrapost.fantasticcal.calculator.operations.factorial
+import me.contrapost.fantasticcal.calculator.operations.nthRoot
+import me.contrapost.fantasticcal.calculator.util.NumberRegexes
 import java.math.BigDecimal
 import kotlin.math.ln
 import kotlin.math.log
@@ -96,7 +96,11 @@ enum class BinaryOperatorSpec(
         description = "addition",
         precedence = BinaryOperatorPrecedence.SECOND,
         calculation = { firstNumber, secondNumber ->
-            require(secondNumber != null) { binaryOperationError("addition") }
+            require(secondNumber != null) {
+                binaryOperationError(
+                    "addition"
+                )
+            }
             BigDecimal(firstNumber + secondNumber)
         }
     ),
@@ -106,7 +110,11 @@ enum class BinaryOperatorSpec(
         description = "multiplication",
         precedence = BinaryOperatorPrecedence.FIRST,
         calculation = { firstNumber, secondNumber ->
-            require(secondNumber != null) { binaryOperationError("multiplication") }
+            require(secondNumber != null) {
+                binaryOperationError(
+                    "multiplication"
+                )
+            }
             BigDecimal(firstNumber * secondNumber)
         }
     ),
@@ -116,7 +124,11 @@ enum class BinaryOperatorSpec(
         description = "division",
         precedence = BinaryOperatorPrecedence.FIRST,
         calculation = { firstNumber, secondNumber ->
-            require(secondNumber != null) { binaryOperationError("division") }
+            require(secondNumber != null) {
+                binaryOperationError(
+                    "division"
+                )
+            }
             require(secondNumber != 0.0) { "Division by $secondNumber is not allowed!" }
             BigDecimal(firstNumber / secondNumber)
         }
@@ -127,7 +139,11 @@ enum class BinaryOperatorSpec(
         description = "modulus",
         precedence = BinaryOperatorPrecedence.FIRST,
         calculation = { firstNumber, secondNumber ->
-            require(secondNumber != null) { binaryOperationError("modulus") }
+            require(secondNumber != null) {
+                binaryOperationError(
+                    "modulus"
+                )
+            }
             require(secondNumber != 0.0) { "Division by $secondNumber is not allowed!" }
             BigDecimal(firstNumber % secondNumber)
         }
@@ -138,7 +154,11 @@ enum class BinaryOperatorSpec(
         description = "subtraction",
         precedence = BinaryOperatorPrecedence.SECOND,
         calculation = { firstNumber, secondNumber ->
-            require(secondNumber != null) { binaryOperationError("subtraction") }
+            require(secondNumber != null) {
+                binaryOperationError(
+                    "subtraction"
+                )
+            }
             BigDecimal(firstNumber - secondNumber)
         }
     )

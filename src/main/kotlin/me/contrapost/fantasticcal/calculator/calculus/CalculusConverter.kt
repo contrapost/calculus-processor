@@ -1,11 +1,11 @@
-package me.contrapost.fantasticcal.calculus
+package me.contrapost.fantasticcal.calculator.calculus
 
-import me.contrapost.fantasticcal.operators.BinaryOperatorSpec
-import me.contrapost.fantasticcal.operators.Operator
-import me.contrapost.fantasticcal.operators.UnaryOperatorSpec
-import me.contrapost.fantasticcal.operators.operators
-import me.contrapost.fantasticcal.operators.ParenthesisRegexes
-import me.contrapost.fantasticcal.util.NumberRegexes.DOUBLE_OR_INT_REGEX
+import me.contrapost.fantasticcal.calculator.operators.BinaryOperatorSpec
+import me.contrapost.fantasticcal.calculator.operators.Operator
+import me.contrapost.fantasticcal.calculator.operators.UnaryOperatorSpec
+import me.contrapost.fantasticcal.calculator.operators.operators
+import me.contrapost.fantasticcal.calculator.operators.ParenthesisRegexes
+import me.contrapost.fantasticcal.calculator.util.NumberRegexes.DOUBLE_OR_INT_REGEX
 
 val calculusRegexes = listOf(
     NumberPart::class to DOUBLE_OR_INT_REGEX.toRegex(),
@@ -13,7 +13,7 @@ val calculusRegexes = listOf(
     CloseParenthesisPart::class to ParenthesisRegexes.CLOSE_PARENTHESIS.regex.toRegex()
 )
 
-fun String.toCalculusParts(): Calculus {
+fun String.toCalculus(): Calculus {
 
     val operatorsWithRanges = operators.map { operatorSpec ->
         operatorSpec.regex.findAll(this).map {
@@ -164,7 +164,11 @@ fun MutableList<CalculusPart>.addNumbersAndParentheses(undefinedCalculusPart: St
 
     when {
         matches.isEmpty() -> {
-            this.add(UndefinedPart(undefinedCalculusPart))
+            this.add(
+                UndefinedPart(
+                    undefinedCalculusPart
+                )
+            )
         }
         else -> {
             val definedCalculusPartSublist = undefinedCalculusPart.extractMatches(matches)
