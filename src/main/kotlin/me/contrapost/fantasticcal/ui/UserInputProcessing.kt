@@ -1,12 +1,12 @@
 package me.contrapost.fantasticcal.ui
 
-import me.contrapost.fantasticcal.calculator.calculate
-import me.contrapost.fantasticcal.calculator.calculus.Calculus
-import me.contrapost.fantasticcal.calculator.calculus.toCalculus
-import me.contrapost.fantasticcal.calculator.calculus.validate
+import me.contrapost.fantasticcal.calculator.Calculator
+import me.contrapost.fantasticcal.calculator.CalculusStep
 import me.contrapost.fantasticcal.calculator.operators.operatorsWithDescriptions
 import java.util.*
 import kotlin.system.exitProcess
+
+val calculator = Calculator()
 
 fun showIntro() {
     println(title("0.2.0"))
@@ -15,45 +15,47 @@ fun showIntro() {
 }
 
 fun performCalculation() {
-    var stop = false
+    var continueCalculating = true
     val detailed = yesNoPrompt("Do you want to see step by step calculation?")
-    while (!stop) {
-        val validCalculus = getValidCalculus()
-        val calculationResult = calculate(validCalculus, detailed)
-        println("Result: $calculationResult")
-        stop = yesNoPrompt("Do you want to continue calculating?")
+    while (continueCalculating) {
+        val validCalculus = getValidCalculus(calculator)
+        val calculationResult = calculator.calculate(validCalculus, detailed)
+        println("Result: ${calculationResult.result}")
+        if (detailed) {
+            println("Calculation steps:")
+            calculationResult.calculationSteps.toStringList().forEach { println(it) }
+        }
+        continueCalculating = yesNoPrompt("Do you want to continue calculating?")
     }
 }
 
-private fun getValidCalculus(): Calculus {
+private fun getValidCalculus(calculator: Calculator): String {
     print("""
         Insert calculus (you can type 'stop' to exit).
         > 
     """.trimIndent())
-    var calculusString = readLine().toCheckedInput().removeWhitespaces()
+    var calculusString = readLine().toCheckedInput()
     var stop = calculusString.toLowerCase() == "stop"
     if (stop) stopProgram()
-    var calculus = calculusString.toCalculus()
-    var validationResult = validate(calculus)
+    var validationResult = calculator.validate(calculusString)
     while (!stop && !validationResult.valid) {
         print("""
             Calculus is invalid: ${validationResult.errors}. Please compose a new calculus or type 'stop' to exit.
             > 
         """.trimIndent())
-        calculusString = readLine().toCheckedInput().removeWhitespaces()
+        calculusString = readLine().toCheckedInput()
 
         when {
             calculusString.toLowerCase() == "stop" -> stop = true
             else -> {
-                calculus = calculusString.toCalculus()
-                validationResult = validate(calculus)
+                validationResult = calculator.validate(calculusString)
             }
         }
     }
 
     return when {
         stop -> stopProgram()
-        else -> calculus
+        else -> calculusString
     }
 }
 
@@ -66,8 +68,8 @@ private fun yesNoPrompt(prompt: String): Boolean {
     }
 
     return when (answer.toUpperCase()) {
-        "N" -> true
-        else -> false
+        "N" -> false
+        else -> true
     }
 }
 
@@ -127,4 +129,9 @@ private fun String?.toCheckedInput(): String = when (this) {
 
 private fun stopProgram(): Nothing = exitProcess(0)
 
-fun String.removeWhitespaces() = this.replace(" ", "")
+private fun List<CalculusStep>.toStringList(): List<String> = this.mapIndexed {
+        index, calculusStep ->
+    "step ${index + 1}: ${calculusStep.calculusStepString}, " +
+            "[calculated ${calculusStep.operatorType} operators" +
+            "${if (calculusStep.binaryStepWithPrecedence()) " with precedence" else ""}]"
+}

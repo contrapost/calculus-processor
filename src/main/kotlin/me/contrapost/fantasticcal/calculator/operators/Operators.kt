@@ -8,6 +8,11 @@ import kotlin.math.ln
 import kotlin.math.log
 import kotlin.math.pow
 
+enum class OperatorType {
+    UNARY,
+    BINARY
+}
+
 interface OperatorSpec {
     val symbol: String
     val regex: Regex
@@ -210,14 +215,3 @@ fun binaryOperationError(operationDescription: String) =
     "Binary operation $operationDescription requires two operands. Second number is missing."
 
 val operatorsWithDescriptions = operators.associate { it.symbol to it.description }
-
-fun validOperator(operatorInput: String?): Operator? = operatorInput?.let {
-    when (val operatorSpec = operatorInput.toOperatorSpec()) {
-        null -> null
-        else -> Operator(operatorInput, operatorSpec)
-    }
-}
-
-private fun String.toOperatorSpec() = operators.firstOrNull {
-    (this == "-" && it.symbol == "-") || this.matches(it.regex)
-}

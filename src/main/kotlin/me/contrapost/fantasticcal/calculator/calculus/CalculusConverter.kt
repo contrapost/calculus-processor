@@ -1,10 +1,6 @@
 package me.contrapost.fantasticcal.calculator.calculus
 
-import me.contrapost.fantasticcal.calculator.operators.BinaryOperatorSpec
-import me.contrapost.fantasticcal.calculator.operators.Operator
-import me.contrapost.fantasticcal.calculator.operators.UnaryOperatorSpec
-import me.contrapost.fantasticcal.calculator.operators.operators
-import me.contrapost.fantasticcal.calculator.operators.ParenthesisRegexes
+import me.contrapost.fantasticcal.calculator.operators.*
 import me.contrapost.fantasticcal.calculator.util.NumberRegexes.DOUBLE_OR_INT_REGEX
 
 val calculusRegexes = listOf(
@@ -14,9 +10,9 @@ val calculusRegexes = listOf(
 )
 
 fun String.toCalculus(): Calculus {
-
+    val withoutWhitespaces = this.removeWhitespaces()
     val operatorsWithRanges = operators.map { operatorSpec ->
-        operatorSpec.regex.findAll(this).map {
+        operatorSpec.regex.findAll(withoutWhitespaces).map {
             CalculusPartWithRange(
                 it.range,
                 OperatorPart(
@@ -34,13 +30,13 @@ fun String.toCalculus(): Calculus {
         }.toList()
     }.flatten()
 
-    val calculusPartList = this.extractMatches(operatorsWithRanges)
+    val calculusPartList = withoutWhitespaces.extractMatches(operatorsWithRanges)
 
     val calculusPartListComplete: MutableList<CalculusPart> = mutableListOf()
 
     when {
         calculusPartList.isEmpty() -> {
-            calculusPartListComplete.addNumbersAndParentheses(this)
+            calculusPartListComplete.addNumbersAndParentheses(withoutWhitespaces)
         }
         else -> {
             calculusPartList.forEach { entry ->
@@ -177,6 +173,8 @@ fun MutableList<CalculusPart>.addNumbersAndParentheses(undefinedCalculusPart: St
     }
 }
 
+fun String.removeWhitespaces() = this.replace(" ", "")
+
 data class CalculusPartWithRange(
     val range: IntRange,
     val calculusPart: CalculusPart
@@ -185,5 +183,12 @@ data class CalculusPartWithRange(
 data class Calculus(
     val parts: List<CalculusPart>
 ) {
+    private val binaryOperators = parts.filterIsInstance(OperatorPart::class.java).filter { it.binaryOperator() }
+
     val complex = parts.filterIsInstance(ParenthesisPart::class.java).isNotEmpty()
+    val hasUnaryOperators = parts.filterIsInstance(OperatorPart::class.java).any { it.unaryOperator() }
+    val hasBinaryOperatorsWithPrecedence =
+        binaryOperators.any { (it.value.operatorSpec as BinaryOperatorSpec).precedence == BinaryOperatorPrecedence.FIRST }
+    val hasBinaryOperatorsWithoutPrecedence =
+        binaryOperators.any { (it.value.operatorSpec as BinaryOperatorSpec).precedence == BinaryOperatorPrecedence.FIRST }
 }
