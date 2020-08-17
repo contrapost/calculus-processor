@@ -1,9 +1,9 @@
-package me.contrapost.calculusprocessor.calculator.calculus
+package me.contrapost.calculusprocessor.calculus
 
-import me.contrapost.calculusprocessor.calculator.operators.BinaryOperatorSpec
-import me.contrapost.calculusprocessor.calculator.operators.Operator
-import me.contrapost.calculusprocessor.calculator.operators.UnaryOperatorPosition
-import me.contrapost.calculusprocessor.calculator.operators.UnaryOperatorSpec
+import me.contrapost.calculusprocessor.operators.BinaryOperatorSpec
+import me.contrapost.calculusprocessor.operators.Operator
+import me.contrapost.calculusprocessor.operators.UnaryOperatorPosition
+import me.contrapost.calculusprocessor.operators.UnaryOperatorSpec
 import java.math.BigDecimal
 
 abstract class CalculusPart {

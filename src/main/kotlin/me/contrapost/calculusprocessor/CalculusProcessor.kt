@@ -1,11 +1,11 @@
-package me.contrapost.calculusprocessor.calculator
+package me.contrapost.calculusprocessor
 
-import me.contrapost.calculusprocessor.calculator.calculus.*
-import me.contrapost.calculusprocessor.calculator.operators.*
-import me.contrapost.calculusprocessor.calculator.operators.UnaryOperatorPosition.PRECEDE_NUMBER
-import me.contrapost.calculusprocessor.calculator.operators.UnaryOperatorPosition.SUCCEED_NUMBER
-import me.contrapost.calculusprocessor.calculator.util.keepNumber
-import me.contrapost.calculusprocessor.calculator.util.toCalculusString
+import me.contrapost.calculusprocessor.calculus.*
+import me.contrapost.calculusprocessor.operators.*
+import me.contrapost.calculusprocessor.operators.UnaryOperatorPosition.PRECEDE_NUMBER
+import me.contrapost.calculusprocessor.operators.UnaryOperatorPosition.SUCCEED_NUMBER
+import me.contrapost.calculusprocessor.util.keepNumber
+import me.contrapost.calculusprocessor.util.toCalculusString
 import java.math.BigDecimal
 import kotlin.collections.LinkedHashMap
 
@@ -21,7 +21,9 @@ class CalculusProcessor {
     fun validate(calculusString: String): ValidationResult {
         val calculus = calculusString.toCalculus()
         val result = validate(calculus)
-        if (result.valid) validCalculus.putIfAbsent(calculusString, CalculusData(calculus, null))
+        if (result.valid) validCalculus.putIfAbsent(calculusString,
+            CalculusData(calculus, null)
+        )
         return result
     }
 
@@ -56,7 +58,7 @@ class CalculusProcessor {
     ): Calculus =
         if (!this.complex && this.parts.size == 1) this
         else Calculus(
-            this.calculateParts(calculusSteps, detailed).removeExcessiveParenthesis()
+            this.calculateParts(calculusSteps, detailed)
         ).calculate(calculusSteps, detailed)
 
     private fun Calculus.calculateParts(
@@ -66,8 +68,10 @@ class CalculusProcessor {
         this.parts.calculateUnaryParts(calculusSteps, this.hasUnaryOperators, detailed)
             .calculateBinaryParts(BinaryOperatorPrecedence.FIRST, this.hasBinaryOperatorsWithPrecedence, calculusSteps, detailed)
             .calculateBinaryParts(BinaryOperatorPrecedence.SECOND, this.hasBinaryOperatorsWithoutPrecedence, calculusSteps, detailed)
+            .removeExcessiveParenthesis(this.complex)
 
-    private fun List<CalculusPart>.removeExcessiveParenthesis(): List<CalculusPart> {
+    private fun List<CalculusPart>.removeExcessiveParenthesis(complex: Boolean): List<CalculusPart> {
+        if (!complex) return this
         val calculusPartList = mutableListOf<CalculusPart>()
         var index = 0
         while (index < this.size) {

@@ -1,7 +1,7 @@
-package me.contrapost.calculusprocessor.calculator.calculus
+package me.contrapost.calculusprocessor.calculus
 
-import me.contrapost.calculusprocessor.calculator.operators.*
-import me.contrapost.calculusprocessor.calculator.util.NumberRegexes.DOUBLE_OR_INT_REGEX
+import me.contrapost.calculusprocessor.operators.*
+import me.contrapost.calculusprocessor.util.NumberRegexes.DOUBLE_OR_INT_REGEX
 
 val calculusRegexes = listOf(
     NumberPart::class to DOUBLE_OR_INT_REGEX.toRegex(),
@@ -190,5 +190,5 @@ data class Calculus(
     val hasBinaryOperatorsWithPrecedence =
         binaryOperators.any { (it.value.operatorSpec as BinaryOperatorSpec).precedence == BinaryOperatorPrecedence.FIRST }
     val hasBinaryOperatorsWithoutPrecedence =
-        binaryOperators.any { (it.value.operatorSpec as BinaryOperatorSpec).precedence == BinaryOperatorPrecedence.FIRST }
+        binaryOperators.any { (it.value.operatorSpec as BinaryOperatorSpec).precedence == BinaryOperatorPrecedence.SECOND }
 }

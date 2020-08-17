@@ -1,4 +1,4 @@
-package me.contrapost.calculusprocessor.calculator.operations
+package me.contrapost.calculusprocessor.operations
 
 import java.math.BigDecimal
 import java.math.BigInteger

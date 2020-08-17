@@ -1,7 +1,5 @@
-package me.contrapost.fantasticcal.calculus
+package me.contrapost.calculusprocessor.calculus
 
-import me.contrapost.calculusprocessor.calculator.calculus.toCalculus
-import me.contrapost.calculusprocessor.calculator.calculus.validate
 import org.junit.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -140,5 +138,12 @@ class CalculusValidatorTest {
         val validationResult =
             validate(calculus.toCalculus())
         assertTrue { validationResult.valid }
+    }
+
+    @Test
+    fun `case 6 invalid calculus with 2 parts`() {
+        val calculus = "V[2] ^ 2"
+        val validationResult = validate(calculus.toCalculus())
+        assertFalse { validationResult.valid }
     }
 }

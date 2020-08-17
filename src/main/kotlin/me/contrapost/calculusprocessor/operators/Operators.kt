@@ -1,8 +1,8 @@
-package me.contrapost.calculusprocessor.calculator.operators
+package me.contrapost.calculusprocessor.operators
 
-import me.contrapost.calculusprocessor.calculator.operations.factorial
-import me.contrapost.calculusprocessor.calculator.operations.nthRoot
-import me.contrapost.calculusprocessor.calculator.util.NumberRegexes
+import me.contrapost.calculusprocessor.operations.factorial
+import me.contrapost.calculusprocessor.operations.nthRoot
+import me.contrapost.calculusprocessor.util.NumberRegexes
 import java.math.BigDecimal
 import kotlin.math.ln
 import kotlin.math.log

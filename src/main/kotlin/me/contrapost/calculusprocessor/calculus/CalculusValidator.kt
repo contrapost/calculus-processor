@@ -1,5 +1,7 @@
-package me.contrapost.calculusprocessor.calculator.calculus
+package me.contrapost.calculusprocessor.calculus
 
+import me.contrapost.calculusprocessor.operators.UnaryOperatorSpec
+import me.contrapost.calculusprocessor.util.toCalculusString
 import kotlin.math.abs
 
 fun validate(calculus: Calculus): ValidationResult {
@@ -40,6 +42,13 @@ fun validateDefinedParts(definedParts: List<CalculusPart>): List<String> {
         )
     )
 
+    if (definedParts.size == 2) {
+        if (!(definedParts[0] is OperatorPart && (definedParts[0] as OperatorPart).unaryOperator() && ((definedParts[0] as OperatorPart).value.operatorSpec as UnaryOperatorSpec).precedeNumber() && definedParts[1] is NumberPart)
+            || !(definedParts[0] is NumberPart && definedParts[1] is OperatorPart && (definedParts[1] as OperatorPart).unaryOperator() && ((definedParts[1] as OperatorPart).value.operatorSpec as UnaryOperatorSpec).succeedNumber()))
+            errors.add("Calculus contains 2 parts, only combinations of a number and unary operator are allowed. Current calculus is ${definedParts.toCalculusString()}")
+    }
+
+    // case 5: parts number is >= 3
     definedParts.forEachIndexed { index, part ->
         when (index) {
             0 -> {
