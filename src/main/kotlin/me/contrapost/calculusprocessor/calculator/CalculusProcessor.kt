@@ -1,15 +1,15 @@
-package me.contrapost.fantasticcal.calculator
+package me.contrapost.calculusprocessor.calculator
 
-import me.contrapost.fantasticcal.calculator.calculus.*
-import me.contrapost.fantasticcal.calculator.operators.*
-import me.contrapost.fantasticcal.calculator.operators.UnaryOperatorPosition.PRECEDE_NUMBER
-import me.contrapost.fantasticcal.calculator.operators.UnaryOperatorPosition.SUCCEED_NUMBER
-import me.contrapost.fantasticcal.calculator.util.keepNumber
-import me.contrapost.fantasticcal.calculator.util.toCalculusString
+import me.contrapost.calculusprocessor.calculator.calculus.*
+import me.contrapost.calculusprocessor.calculator.operators.*
+import me.contrapost.calculusprocessor.calculator.operators.UnaryOperatorPosition.PRECEDE_NUMBER
+import me.contrapost.calculusprocessor.calculator.operators.UnaryOperatorPosition.SUCCEED_NUMBER
+import me.contrapost.calculusprocessor.calculator.util.keepNumber
+import me.contrapost.calculusprocessor.calculator.util.toCalculusString
 import java.math.BigDecimal
 import kotlin.collections.LinkedHashMap
 
-class Calculator {
+class CalculusProcessor {
 
     private val validCalculus: MutableMap<String, CalculusData> = object : LinkedHashMap<String, CalculusData>() {
         override fun removeEldestEntry(eldest: MutableMap.MutableEntry<String, CalculusData>): Boolean = when {
@@ -43,8 +43,10 @@ class Calculator {
         val calculusSteps = mutableListOf<CalculusStep>()
         val compiledCalculus = validCalculus[calculusString]!!.compiledCalculus
         val result = compiledCalculus.calculate(calculusSteps, detailed).parts[0].value as BigDecimal
-        val calculusResult = CalculusResult(result, calculusSteps)
-        validCalculus[calculusString] = CalculusData(compiledCalculus, calculusResult)
+        val calculusResult =
+            CalculusResult(result, calculusSteps)
+        validCalculus[calculusString] =
+            CalculusData(compiledCalculus, calculusResult)
         return calculusResult
     }
 

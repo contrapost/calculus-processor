@@ -1,7 +1,7 @@
-package me.contrapost.fantasticcal.calculator.calculus
+package me.contrapost.calculusprocessor.calculator.calculus
 
-import me.contrapost.fantasticcal.calculator.operators.*
-import me.contrapost.fantasticcal.calculator.util.NumberRegexes.DOUBLE_OR_INT_REGEX
+import me.contrapost.calculusprocessor.calculator.operators.*
+import me.contrapost.calculusprocessor.calculator.util.NumberRegexes.DOUBLE_OR_INT_REGEX
 
 val calculusRegexes = listOf(
     NumberPart::class to DOUBLE_OR_INT_REGEX.toRegex(),

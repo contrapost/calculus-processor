@@ -1,8 +1,8 @@
-package me.contrapost.fantasticcal.calculator.operators
+package me.contrapost.calculusprocessor.calculator.operators
 
-import me.contrapost.fantasticcal.calculator.operations.factorial
-import me.contrapost.fantasticcal.calculator.operations.nthRoot
-import me.contrapost.fantasticcal.calculator.util.NumberRegexes
+import me.contrapost.calculusprocessor.calculator.operations.factorial
+import me.contrapost.calculusprocessor.calculator.operations.nthRoot
+import me.contrapost.calculusprocessor.calculator.util.NumberRegexes
 import java.math.BigDecimal
 import kotlin.math.ln
 import kotlin.math.log
@@ -48,7 +48,10 @@ enum class UnaryOperatorSpec(
         operatorWithBase = true,
         calculation = { firstNumber, secondNumber ->
             require(firstNumber >= 0.0) { "It is impossible to get even radical of negative number!" }
-            nthRoot(firstNumber, secondNumber!!)
+            nthRoot(
+                firstNumber,
+                secondNumber!!
+            )
         }),
     FACTORIAL(
         symbol = "!",

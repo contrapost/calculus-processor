@@ -1,7 +1,7 @@
-package me.contrapost.fantasticcal.calculator.util
+package me.contrapost.calculusprocessor.calculator.util
 
-import me.contrapost.fantasticcal.calculator.calculus.CalculusPart
-import me.contrapost.fantasticcal.calculator.calculus.OperatorPart
+import me.contrapost.calculusprocessor.calculator.calculus.CalculusPart
+import me.contrapost.calculusprocessor.calculator.calculus.OperatorPart
 
 object NumberRegexes {
     const val DOUBLE_OR_INT_REGEX = "(-)?(\\d{1,1000}(\\.\\d{1,1000})?+|\\.\\d{1,1000})"

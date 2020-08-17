@@ -1,4 +1,4 @@
-package me.contrapost.fantasticcal.calculator.calculus
+package me.contrapost.calculusprocessor.calculator.calculus
 
 import kotlin.math.abs
 
@@ -18,7 +18,10 @@ fun validate(calculus: Calculus): ValidationResult {
         )
     }
 
-    return ValidationResult(errors.isEmpty(), errors)
+    return ValidationResult(
+        errors.isEmpty(),
+        errors
+    )
 }
 
 fun validateDefinedParts(definedParts: List<CalculusPart>): List<String> {
@@ -31,7 +34,11 @@ fun validateDefinedParts(definedParts: List<CalculusPart>): List<String> {
     }
 
     // case 3: check parentheses
-    errors.addAll(validateParenthesis(definedParts))
+    errors.addAll(
+        validateParenthesis(
+            definedParts
+        )
+    )
 
     definedParts.forEachIndexed { index, part ->
         when (index) {

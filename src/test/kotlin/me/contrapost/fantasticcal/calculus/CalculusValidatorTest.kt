@@ -1,7 +1,7 @@
 package me.contrapost.fantasticcal.calculus
 
-import me.contrapost.fantasticcal.calculator.calculus.toCalculus
-import me.contrapost.fantasticcal.calculator.calculus.validate
+import me.contrapost.calculusprocessor.calculator.calculus.toCalculus
+import me.contrapost.calculusprocessor.calculator.calculus.validate
 import org.junit.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
