@@ -1,6 +1,7 @@
 package me.contrapost.calculusprocessor.calculus
 
 import org.junit.Test
+import java.math.BigDecimal
 import kotlin.test.assertTrue
 
 class CalculusConverterTest {
@@ -27,5 +28,9 @@ class CalculusConverterTest {
         val calc = calculusString.toCalculus()
         assertTrue { calc.parts.size == 14 }
         assertTrue { calc.parts.filterIsInstance(UndefinedPart::class.java).isEmpty() }
+
+        // parts
+        assertTrue { calc.parts[0].parentheses() }
+        assertTrue { (calc.parts[1] as NumberPart).value == BigDecimal.valueOf(23) }
     }
 }
