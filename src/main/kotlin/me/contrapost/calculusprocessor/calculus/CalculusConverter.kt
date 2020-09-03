@@ -10,18 +10,13 @@ private val calculusRegexes = listOf(
 )
 
 fun String.toCalculus(): Calculus = with(this.removeWhitespaces()) {
-    val operatorsWithRanges = this.operatorsWithRanges()
-
-    val calculusPartList = this.extractMatches(operatorsWithRanges)
+    val calculusPartList = this.extractMatches(this.operatorsWithRanges())
 
     val calculusPartListComplete: MutableList<CalculusPart> = mutableListOf()
 
     when {
-        calculusPartList.isEmpty() -> {
-            calculusPartListComplete.addNumbersAndParentheses(this)
-        }
-        else -> {
-            calculusPartList.forEach { entry ->
+        calculusPartList.isEmpty() -> calculusPartListComplete.addNumbersAndParentheses(this)
+        else -> calculusPartList.forEach { entry ->
                 when (entry) {
                     is OperatorPart -> calculusPartListComplete.add(entry)
                     else -> {
@@ -30,7 +25,6 @@ fun String.toCalculus(): Calculus = with(this.removeWhitespaces()) {
                     }
                 }
             }
-        }
     }
 
     return Calculus(calculusPartListComplete)
@@ -55,7 +49,7 @@ private fun String.operatorsWithRanges() = operators.map { operatorSpec ->
 @Suppress("LiftReturnOrAssignment")
 private fun String.extractMatches(calculusPartsWithRanges: List<CalculusPartWithRange>): List<CalculusPart> {
     var stopIndex = 0
-    val stringAsListOfRanges: MutableList<CalculusPart> = mutableListOf()
+    val calculusParts: MutableList<CalculusPart> = mutableListOf()
     calculusPartsWithRanges.sortedBy { it.range.first }.forEachIndexed { index, entry ->
         when (index) {
             // last match
@@ -65,19 +59,19 @@ private fun String.extractMatches(calculusPartsWithRanges: List<CalculusPartWith
                     stopIndex until this.length != entry.range -> {
                         when {
                             entry.range.last == this.length - 1 -> {
-                                stringAsListOfRanges.add(
+                                calculusParts.add(
                                     UndefinedPart(
                                         this.substring(
                                             stopIndex until entry.range.first
                                         )
                                     )
                                 )
-                                stringAsListOfRanges.add(entry.calculusPart)
+                                calculusParts.add(entry.calculusPart)
                                 stopIndex = entry.range.last + 1
                             }
                             entry.range.first == stopIndex -> {
-                                stringAsListOfRanges.add(entry.calculusPart)
-                                stringAsListOfRanges.add(
+                                calculusParts.add(entry.calculusPart)
+                                calculusParts.add(
                                     UndefinedPart(
                                         this.substring(
                                             entry.range.last + 1 until this.length
@@ -87,15 +81,15 @@ private fun String.extractMatches(calculusPartsWithRanges: List<CalculusPartWith
                                 stopIndex = this.length - 1
                             }
                             else -> {
-                                stringAsListOfRanges.add(
+                                calculusParts.add(
                                     UndefinedPart(
                                         this.substring(
                                             stopIndex until entry.range.first
                                         )
                                     )
                                 )
-                                stringAsListOfRanges.add(entry.calculusPart)
-                                stringAsListOfRanges.add(
+                                calculusParts.add(entry.calculusPart)
+                                calculusParts.add(
                                     UndefinedPart(
                                         this.substring(
                                             entry.range.last + 1 until this.length
@@ -107,7 +101,7 @@ private fun String.extractMatches(calculusPartsWithRanges: List<CalculusPartWith
                         }
                     }
                     else -> {
-                        stringAsListOfRanges.add(entry.calculusPart)
+                        calculusParts.add(entry.calculusPart)
                         stopIndex = this.length - 1
                     }
                 }
@@ -117,30 +111,29 @@ private fun String.extractMatches(calculusPartsWithRanges: List<CalculusPartWith
                 when (entry.range.first) {
                     // the match is right after the last processed part of the string
                     stopIndex -> {
-                        stringAsListOfRanges.add(entry.calculusPart)
+                        calculusParts.add(entry.calculusPart)
                         stopIndex = entry.range.last + 1
                     }
                     // there are undefined part of the string before the match
                     else -> {
-                        stringAsListOfRanges.add(
+                        calculusParts.add(
                             UndefinedPart(
                                 value = this.substring(
                                     stopIndex until entry.range.first
                                 )
                             )
                         )
-                        stringAsListOfRanges.add(entry.calculusPart)
+                        calculusParts.add(entry.calculusPart)
                         stopIndex = entry.range.last + 1
                     }
                 }
             }
         }
     }
-    return stringAsListOfRanges
+    return calculusParts
 }
 
 private fun MutableList<CalculusPart>.addNumbersAndParentheses(undefinedCalculusPart: String) {
-
     val matches = calculusRegexes.map { regex ->
         regex.second.findAll(undefinedCalculusPart).map {
             CalculusPartWithRange(
